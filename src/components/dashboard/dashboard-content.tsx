@@ -33,6 +33,9 @@ export function DashboardContent() {
     refetchInterval: 5000, // Poll every 5 seconds
     retry: false,
   });
+  const telemetryUnavailable = isError;
+  const metricValue = (value: number | null | undefined) =>
+    telemetryUnavailable ? "--" : formatNumber(value ?? 0);
 
   useEffect(() => {
     if (data) {
@@ -62,10 +65,10 @@ export function DashboardContent() {
         title="Dashboard"
         description="Operations and system metrics."
         actions={
-          isError ? (
-            <Badge variant="outline" className="h-7 rounded-md border-destructive/30 bg-destructive/10 text-destructive">
+          telemetryUnavailable ? (
+            <Badge variant="outline" className="h-7 rounded-md border-amber-600/25 bg-amber-500/10 text-amber-700 dark:text-amber-300">
               <Radio className="h-3 w-3" aria-hidden="true" />
-              Unavailable
+              Telemetry pending
             </Badge>
           ) : (
             <Badge variant="outline" className="h-7 rounded-md border-emerald-600/25 bg-emerald-500/12 text-emerald-700 dark:text-emerald-300">
@@ -84,30 +87,30 @@ export function DashboardContent() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Failed Transfers"
-          value={isError ? "Unavailable" : formatNumber(data?.transferFailedTotal ?? 0)}
+          value={metricValue(data?.transferFailedTotal)}
           icon={AlertTriangle}
           tone="danger"
           isLoading={isLoading}
         />
         <StatCard
           label="Compensating"
-          value={isError ? "Unavailable" : formatNumber(data?.transferCompensatingTotal ?? 0)}
+          value={metricValue(data?.transferCompensatingTotal)}
           icon={Activity}
           tone="warning"
           isLoading={isLoading}
         />
         <StatCard
           label="DLQ Depth"
-          value={isError ? "Unavailable" : formatNumber(data?.walletDlqDepth ?? 0)}
+          value={metricValue(data?.walletDlqDepth)}
           icon={ServerCrash}
-          tone="danger"
+          tone={telemetryUnavailable ? "neutral" : "danger"}
           isLoading={isLoading}
         />
         <StatCard
           label="Reconciliation Drift"
-          value={isError ? "Unavailable" : formatNumber(data?.reconciliationDrift ?? 0)}
+          value={metricValue(data?.reconciliationDrift)}
           icon={Scale}
-          tone={data?.reconciliationDrift && data.reconciliationDrift > 0 ? "danger" : "success"}
+          tone={telemetryUnavailable ? "neutral" : data?.reconciliationDrift && data.reconciliationDrift > 0 ? "danger" : "success"}
           isLoading={isLoading}
         />
       </div>
@@ -161,8 +164,15 @@ export function DashboardContent() {
               </div>
             ) : (
               <div className="flex h-[300px] items-center justify-center rounded-md border bg-muted/20 text-muted-foreground">
-                {isError ? (
-                  <Badge variant="outline" className="rounded-md border-destructive/30 bg-destructive/10 text-destructive">Metrics Unavailable</Badge>
+                {telemetryUnavailable ? (
+                  <div className="max-w-sm px-6 text-center">
+                    <Badge variant="outline" className="rounded-md border-amber-600/25 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                      Metrics not configured
+                    </Badge>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      Live telemetry endpoint is not available in this local stack.
+                    </p>
+                  </div>
                 ) : (
                   <div className="w-full space-y-3 px-6">
                     <Skeleton className="h-4 w-1/3" />
@@ -216,7 +226,18 @@ export function DashboardContent() {
               </div>
             ) : (
               <div className="flex h-[300px] items-center justify-center rounded-md border bg-muted/20 text-muted-foreground">
-                {isError ? "Failure metrics unavailable" : "Collecting failure data..."}
+                {telemetryUnavailable ? (
+                  <div className="max-w-sm px-6 text-center">
+                    <Badge variant="outline" className="rounded-md border-amber-600/25 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                      Metrics not configured
+                    </Badge>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      Failure trend charts will appear when the metrics API is wired.
+                    </p>
+                  </div>
+                ) : (
+                  "Collecting failure data..."
+                )}
               </div>
             )}
           </CardContent>
@@ -230,7 +251,7 @@ export function DashboardContent() {
         <CardContent className="flex items-center justify-between gap-4">
           <div>
             <div className="numbers font-mono text-4xl font-semibold text-primary">
-              {isError ? "--" : isLoading ? <Skeleton className="h-10 w-24" /> : formatNumber(data?.walletConsumerLag ?? 0)}
+              {telemetryUnavailable ? "--" : isLoading ? <Skeleton className="h-10 w-24" /> : formatNumber(data?.walletConsumerLag ?? 0)}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">events behind</p>
           </div>

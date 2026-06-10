@@ -26,6 +26,7 @@ export function AccountsTable() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const currentSearch = searchParams.toString();
 
   const initialPage = Number(searchParams.get("page") || "1");
   const initialQ = searchParams.get("q") || "";
@@ -36,15 +37,18 @@ export function AccountsTable() {
 
   useEffect(() => {
     // Update URL when page or q changes
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(currentSearch);
     params.set("page", page.toString());
     if (debouncedQ) {
       params.set("q", debouncedQ);
     } else {
       params.delete("q");
     }
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [page, debouncedQ, pathname, router, searchParams]);
+    const nextSearch = params.toString();
+    if (nextSearch !== currentSearch) {
+      router.replace(`${pathname}?${nextSearch}`);
+    }
+  }, [page, debouncedQ, pathname, router, currentSearch]);
 
 
 
@@ -52,6 +56,7 @@ export function AccountsTable() {
     queryKey: ["accounts", { page: page - 1, size: 10, q: debouncedQ }],
     queryFn: () => getAccounts(page - 1, 10, debouncedQ),
   });
+  const accounts = data?.items ?? [];
 
   return (
     <DataTableShell
@@ -90,10 +95,10 @@ export function AccountsTable() {
               <TableSkeletonRows columns={4} />
             ) : isError ? (
               <ErrorTableRow colSpan={4} title="Error loading accounts." onRetry={() => refetch()} />
-            ) : data?.items.length === 0 ? (
+            ) : accounts.length === 0 ? (
               <EmptyTableRow colSpan={4} title="No accounts found." description="Try adjusting the search term." />
             ) : (
-              data?.items.map((account) => (
+              accounts.map((account) => (
                 <TableRow key={account.id}>
                   <TableCell className="font-medium">
                     <Link href={`/accounts/${account.id}`} className="hover:underline text-primary">

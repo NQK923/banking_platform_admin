@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-fetch";
+import { normalizePaginatedResponse } from "@/lib/pagination";
 import {
   AuditLog,
   DlqMessage,
@@ -31,7 +32,7 @@ export async function getDlqMessages(
   if (!res.ok) {
     throw new Error("Failed to fetch DLQ messages");
   }
-  return res.json();
+  return normalizePaginatedResponse<DlqMessage>(await res.json(), page, size);
 }
 
 export async function replayDlqMessage(
@@ -67,7 +68,7 @@ export async function getAuditLogs(
   if (!res.ok) {
     throw new Error("Failed to fetch audit logs");
   }
-  return res.json();
+  return normalizePaginatedResponse<AuditLog>(await res.json(), page, size);
 }
 
 export async function getLiveMetrics(): Promise<SystemMetrics> {

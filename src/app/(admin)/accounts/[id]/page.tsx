@@ -18,8 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -76,11 +77,13 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
         breadcrumbs={[{ label: "Accounts", href: "/accounts" }, { label: "Detail" }]}
         actions={
           <>
-            <Button variant="outline" size="icon" aria-label="Back to accounts" render={
-              <Link href="/accounts">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            } />
+            <Link
+              href="/accounts"
+              aria-label="Back to accounts"
+              className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
             {account ? <StatusBadge status={account.status} /> : null}
             {account && account.status !== "SUSPENDED" ? (
             <AlertDialog>
@@ -203,7 +206,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                         <StatusBadge status={entry.entryType} />
                       </TableCell>
                       <TableCell className="numbers text-right font-mono font-medium">
-                        <span className={entry.amount.startsWith("-") ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>
+                        <span className={String(entry.amount).startsWith("-") ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}>
                           {formatMoney(entry.amount, entry.currency)}
                         </span>
                       </TableCell>

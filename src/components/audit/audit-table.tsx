@@ -18,24 +18,33 @@ import { PaginationControls } from "@/components/admin/pagination-controls";
 import { Timestamp } from "@/components/admin/timestamp";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
 
+function shortId(value: string) {
+  return value.length > 8 ? `${value.substring(0, 8)}...` : value;
+}
+
 export function AuditTable() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const currentSearch = searchParams.toString();
 
   const initialPage = Number(searchParams.get("page") || "1");
   const [page, setPage] = useState(initialPage);
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(currentSearch);
     params.set("page", page.toString());
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [page, pathname, router, searchParams]);
+    const nextSearch = params.toString();
+    if (nextSearch !== currentSearch) {
+      router.replace(`${pathname}?${nextSearch}`);
+    }
+  }, [page, pathname, router, currentSearch]);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["audit", { page: page - 1, size: 15 }],
     queryFn: () => getAuditLogs(page - 1, 15),
   });
+  const logs = data?.items ?? [];
 
   return (
     <DataTableShell
@@ -65,34 +74,39 @@ export function AuditTable() {
               <TableSkeletonRows rows={15} columns={5} />
             ) : isError ? (
               <ErrorTableRow colSpan={5} title="Error loading audit logs." onRetry={() => refetch()} />
-            ) : data?.items.length === 0 ? (
+            ) : logs.length === 0 ? (
               <EmptyTableRow colSpan={5} title="No audit logs found." description="Audited admin activity will appear here." />
             ) : (
-              data?.items.map((log) => (
-                <TableRow key={log.id}>
+              logs.map((log, index) => {
+                const actorId = log.actorId ?? "";
+                const targetId = log.targetId ?? "";
+                const isSystemActor = actorId === "" || actorId.toLowerCase().startsWith("sys");
+
+                return (
+                <TableRow key={log.id || `${log.createdAt}-${index}`}>
                   <TableCell>
                     <Timestamp value={log.createdAt} />
                   </TableCell>
                   <TableCell className="max-w-[9rem] font-mono text-xs">
-                    {log.actorId.startsWith("sys") ? (
-                      <span className="text-muted-foreground">{log.actorId}</span>
+                    {isSystemActor ? (
+                      <span className="text-muted-foreground">{actorId || "SYSTEM"}</span>
                     ) : (
-                      <Link href={`/accounts/${log.actorId}`} className="text-primary hover:underline">
-                        {log.actorId.substring(0, 8)}...
+                      <Link href={`/accounts/${actorId}`} className="text-primary hover:underline">
+                        {shortId(actorId)}
                       </Link>
                     )}
                   </TableCell>
                   <TableCell className="max-w-[14rem] whitespace-normal break-words text-sm font-medium">
-                    {log.action}
+                    {log.action || "-"}
                   </TableCell>
                   <TableCell className="max-w-[9rem] font-mono text-xs">
-                    {log.targetId ? (
+                    {targetId ? (
                       log.targetType === "ACCOUNT" ? (
-                        <Link href={`/accounts/${log.targetId}`} className="text-primary hover:underline">
-                          {log.targetId.substring(0, 8)}...
+                        <Link href={`/accounts/${targetId}`} className="text-primary hover:underline">
+                          {shortId(targetId)}
                         </Link>
                       ) : (
-                        <span>{log.targetId.substring(0, 8)}...</span>
+                        <span>{shortId(targetId)}</span>
                       )
                     ) : (
                       <span className="text-muted-foreground">-</span>
@@ -102,7 +116,8 @@ export function AuditTable() {
                     {log.details || "-"}
                   </TableCell>
                 </TableRow>
-              ))
+                );
+              })
             )}
           </TableBody>
         </Table>

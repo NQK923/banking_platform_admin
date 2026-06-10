@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-fetch";
+import { normalizePaginatedResponse } from "@/lib/pagination";
 import { PaginatedResponse, Transaction } from "@/lib/types";
 
 export async function getTransactions(
@@ -19,5 +20,5 @@ export async function getTransactions(
   if (!res.ok) {
     throw new Error("Failed to fetch transactions");
   }
-  return res.json();
+  return normalizePaginatedResponse<Transaction>(await res.json(), page, size);
 }

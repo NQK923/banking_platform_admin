@@ -28,6 +28,7 @@ export function TransactionsTable() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const currentSearch = searchParams.toString();
 
   const initialPage = Number(searchParams.get("page") || "1");
   const initialStatus = searchParams.get("status") || "ALL";
@@ -41,7 +42,7 @@ export function TransactionsTable() {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(currentSearch);
     params.set("page", page.toString());
     if (status && status !== "ALL") {
       params.set("status", status);
@@ -53,8 +54,11 @@ export function TransactionsTable() {
     } else {
       params.delete("accountId");
     }
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [page, status, debouncedAccountId, pathname, router, searchParams]);
+    const nextSearch = params.toString();
+    if (nextSearch !== currentSearch) {
+      router.replace(`${pathname}?${nextSearch}`);
+    }
+  }, [page, status, debouncedAccountId, pathname, router, currentSearch]);
 
 
 
@@ -62,6 +66,7 @@ export function TransactionsTable() {
     queryKey: ["transactions", { page: page - 1, size: 10, status, accountId: debouncedAccountId }],
     queryFn: () => getTransactions(page - 1, 10, status, debouncedAccountId),
   });
+  const transactions = data?.items ?? [];
 
   return (
     <DataTableShell
@@ -120,10 +125,10 @@ export function TransactionsTable() {
               <TableSkeletonRows columns={6} />
             ) : isError ? (
               <ErrorTableRow colSpan={6} title="Error loading transactions." onRetry={() => refetch()} />
-            ) : data?.items.length === 0 ? (
+            ) : transactions.length === 0 ? (
               <EmptyTableRow colSpan={6} title="No transactions found." description="Try a different status or account filter." />
             ) : (
-              data?.items.map((tx) => (
+              transactions.map((tx) => (
                 <React.Fragment key={tx.id}>
                   <TableRow 
                     className="cursor-pointer hover:bg-muted/50"

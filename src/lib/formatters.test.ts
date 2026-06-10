@@ -20,6 +20,11 @@ describe("formatMoney", () => {
     expect(formatMoney(undefined, "VND")).toBe("0");
   });
 
+  it("tolerates numeric JSON values for display only", () => {
+    expect(formatMoney(250, "VND")).toBe("250 VND");
+    expect(formatMoney(-1234.5, "USD")).toBe("-1,234.5 USD");
+  });
+
   it("handles very large strings without losing precision", () => {
     const largeNumber = "999999999999999999999.99999999999999999999";
     expect(formatMoney(largeNumber, "VND")).toBe(

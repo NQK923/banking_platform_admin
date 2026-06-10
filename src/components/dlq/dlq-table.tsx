@@ -36,21 +36,26 @@ export function DlqTable() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const currentSearch = searchParams.toString();
   const queryClient = useQueryClient();
 
   const initialPage = Number(searchParams.get("page") || "1");
   const [page, setPage] = useState(initialPage);
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(currentSearch);
     params.set("page", page.toString());
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [page, pathname, router, searchParams]);
+    const nextSearch = params.toString();
+    if (nextSearch !== currentSearch) {
+      router.replace(`${pathname}?${nextSearch}`);
+    }
+  }, [page, pathname, router, currentSearch]);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dlq", { page: page - 1, size: 10 }],
     queryFn: () => getDlqMessages(page - 1, 10),
   });
+  const messages = data?.items ?? [];
 
   const replayMutation = useMutation({
     mutationFn: (params: { partition?: number; offset?: number; replayAll: boolean }) =>
@@ -69,7 +74,7 @@ export function DlqTable() {
       <div className="flex items-center justify-end">
         <AlertDialog>
           <AlertDialogTrigger render={
-            <Button variant="destructive" disabled={data?.items.length === 0 || replayMutation.isPending}>
+            <Button variant="destructive" disabled={messages.length === 0 || replayMutation.isPending}>
               <ShieldAlert className="h-4 w-4 mr-2" />
               Replay All
             </Button>
@@ -135,10 +140,10 @@ export function DlqTable() {
               <TableSkeletonRows columns={5} actionColumn />
             ) : isError ? (
               <ErrorTableRow colSpan={5} title="Error loading DLQ messages." onRetry={() => refetch()} />
-            ) : data?.items.length === 0 ? (
+            ) : messages.length === 0 ? (
               <EmptyTableRow colSpan={5} title="The DLQ is currently empty." description="Failed event messages will appear here for replay." />
             ) : (
-              data?.items.map((msg) => (
+              messages.map((msg) => (
                 <TableRow key={msg.eventId}>
                   <TableCell><Timestamp value={msg.createdAt} /></TableCell>
                   <TableCell>

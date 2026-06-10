@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-fetch";
+import { normalizePaginatedResponse } from "@/lib/pagination";
 import { Account, LedgerEntry, PaginatedResponse } from "@/lib/types";
 
 export async function getAccounts(page: number = 0, size: number = 10, q?: string): Promise<PaginatedResponse<Account>> {
@@ -13,7 +14,7 @@ export async function getAccounts(page: number = 0, size: number = 10, q?: strin
   if (!res.ok) {
     throw new Error("Failed to fetch accounts");
   }
-  return res.json();
+  return normalizePaginatedResponse<Account>(await res.json(), page, size);
 }
 
 export async function getAccountDetails(id: string): Promise<Account> {
