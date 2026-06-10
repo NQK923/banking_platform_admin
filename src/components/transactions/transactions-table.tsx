@@ -76,7 +76,7 @@ export function TransactionsTable() {
         >
         <select
           aria-label="Filter by transaction status"
-          className="flex h-9 w-[200px] items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
           value={status}
           onChange={(e) => {
             setStatus(e.target.value);
@@ -148,7 +148,7 @@ export function TransactionsTable() {
                     <TableCell>
                       <StatusBadge status={tx.status} />
                     </TableCell>
-                    <TableCell className="font-mono text-xs">
+                    <TableCell className="max-w-[9rem] font-mono text-xs">
                       {tx.senderId ? (
                         <Link href={`/accounts/${tx.senderId}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
                           {tx.senderId.substring(0, 8)}...
@@ -157,7 +157,7 @@ export function TransactionsTable() {
                         <span className="text-muted-foreground">SYSTEM</span>
                       )}
                     </TableCell>
-                    <TableCell className="font-mono text-xs">
+                    <TableCell className="max-w-[9rem] font-mono text-xs">
                       {tx.recipientId ? (
                         <Link href={`/accounts/${tx.recipientId}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
                           {tx.recipientId.substring(0, 8)}...
@@ -182,16 +182,16 @@ export function TransactionsTable() {
                           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div>
                             <p className="mb-1 font-medium">Transaction ID</p>
-                            <p className="font-mono text-xs text-muted-foreground break-all">{tx.id}</p>
+                            <p className="break-all font-mono text-xs text-muted-foreground">{tx.id}</p>
                           </div>
                           <div>
                             <p className="mb-1 font-medium">Journal ID</p>
-                            <p className="font-mono text-xs text-muted-foreground break-all">{tx.journalId}</p>
+                            <p className="break-all font-mono text-xs text-muted-foreground">{tx.journalId}</p>
                           </div>
                           {tx.note && (
                             <div className="col-span-full">
                               <p className="mb-1 font-medium">Note</p>
-                              <p className="text-muted-foreground italic">&quot;{tx.note}&quot;</p>
+                              <p className="whitespace-normal break-words text-muted-foreground italic">&quot;{tx.note}&quot;</p>
                             </div>
                           )}
                           {tx.failureReason && (
@@ -199,7 +199,7 @@ export function TransactionsTable() {
                               <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
                               <div>
                                 <p className="font-medium">Failure Reason</p>
-                                <p>{tx.failureReason}</p>
+                                <p className="whitespace-normal break-words">{tx.failureReason}</p>
                               </div>
                             </div>
                           )}

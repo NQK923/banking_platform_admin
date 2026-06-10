@@ -7,11 +7,11 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-dvh overflow-hidden bg-background">
       <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto bg-[linear-gradient(180deg,var(--background),color-mix(in_oklch,var(--background),var(--muted)_45%))] p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-[linear-gradient(180deg,var(--background),color-mix(in_oklch,var(--background),var(--muted)_45%))] p-3 sm:p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>

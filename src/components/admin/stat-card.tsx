@@ -35,7 +35,7 @@ export function StatCard({ label, value, icon: Icon, tone = "neutral", delta, is
         {isLoading ? (
           <Skeleton className="h-8 w-20" />
         ) : (
-          <div className="numbers text-3xl font-semibold tracking-tight">{value}</div>
+          <div className="numbers break-words text-2xl font-semibold tracking-tight sm:text-3xl">{value}</div>
         )}
         {delta ? <p className="mt-1 text-xs text-muted-foreground">{delta}</p> : null}
       </CardContent>

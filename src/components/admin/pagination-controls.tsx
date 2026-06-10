@@ -21,11 +21,11 @@ export function PaginationControls({
   onNext,
 }: PaginationControlsProps) {
   return (
-    <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-      <div>
+    <div className="flex min-w-0 flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <div className="truncate">
         Showing page {page} of {totalPages || 1} (Total: {formatNumber(totalElements || 0)})
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <Button
           variant="outline"
           size="sm"

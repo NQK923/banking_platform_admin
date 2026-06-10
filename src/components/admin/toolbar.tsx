@@ -20,7 +20,7 @@ export function Toolbar({
   className,
 }: ToolbarProps) {
   return (
-    <div className={cn("flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", className)}>
+    <div className={cn("flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", className)}>
       {onSearchChange ? (
         <div className="relative w-full sm:max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -35,7 +35,7 @@ export function Toolbar({
       ) : (
         <div />
       )}
-      {children ? <div className="flex flex-wrap items-center gap-2">{children}</div> : null}
+      {children ? <div className="flex min-w-0 flex-wrap items-center gap-2 [&>*]:max-w-full">{children}</div> : null}
     </div>
   );
 }

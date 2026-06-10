@@ -140,11 +140,11 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                 <Skeleton className="h-4 w-2/3" />
               </div>
             ) : account ? (
-              <dl className="grid grid-cols-2 gap-y-4 text-sm">
+              <dl className="grid grid-cols-1 gap-x-4 gap-y-4 text-sm sm:grid-cols-[8rem_minmax(0,1fr)]">
                 <dt className="font-medium text-muted-foreground">Email</dt>
-                <dd>{account.email || "N/A"}</dd>
+                <dd className="min-w-0 break-words">{account.email || "N/A"}</dd>
                 <dt className="font-medium text-muted-foreground">Phone</dt>
-                <dd>{account.phoneNumber || "N/A"}</dd>
+                <dd className="min-w-0 break-words">{account.phoneNumber || "N/A"}</dd>
                 <dt className="font-medium text-muted-foreground">Status</dt>
                 <dd>
                   <StatusBadge status={account.status} />
@@ -165,7 +165,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
             {isAccountLoading ? (
               <Skeleton className="h-10 w-32" />
             ) : account ? (
-              <div className="numbers font-mono text-4xl font-semibold tracking-tight">
+              <div className="numbers break-words font-mono text-3xl font-semibold tracking-tight sm:text-4xl">
                 {formatMoney(account.balance, account.currency)}
               </div>
             ) : null}
@@ -198,7 +198,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                   ledger?.map((entry) => (
                     <TableRow key={entry.id}>
                       <TableCell><Timestamp value={entry.createdAt} /></TableCell>
-                      <TableCell className="font-mono text-xs">{entry.journalId}</TableCell>
+                      <TableCell className="max-w-[18rem] whitespace-normal break-all font-mono text-xs">{entry.journalId}</TableCell>
                       <TableCell>
                         <StatusBadge status={entry.entryType} />
                       </TableCell>

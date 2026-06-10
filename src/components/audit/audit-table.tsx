@@ -73,7 +73,7 @@ export function AuditTable() {
                   <TableCell>
                     <Timestamp value={log.createdAt} />
                   </TableCell>
-                  <TableCell className="font-mono text-xs">
+                  <TableCell className="max-w-[9rem] font-mono text-xs">
                     {log.actorId.startsWith("sys") ? (
                       <span className="text-muted-foreground">{log.actorId}</span>
                     ) : (
@@ -82,10 +82,10 @@ export function AuditTable() {
                       </Link>
                     )}
                   </TableCell>
-                  <TableCell className="font-medium text-sm">
+                  <TableCell className="max-w-[14rem] whitespace-normal break-words text-sm font-medium">
                     {log.action}
                   </TableCell>
-                  <TableCell className="font-mono text-xs">
+                  <TableCell className="max-w-[9rem] font-mono text-xs">
                     {log.targetId ? (
                       log.targetType === "ACCOUNT" ? (
                         <Link href={`/accounts/${log.targetId}`} className="text-primary hover:underline">
@@ -98,7 +98,7 @@ export function AuditTable() {
                       <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground max-w-xs truncate" title={log.details || ""}>
+                  <TableCell className="max-w-xs whitespace-normal break-words text-sm text-muted-foreground" title={log.details || ""}>
                     {log.details || "-"}
                   </TableCell>
                 </TableRow>

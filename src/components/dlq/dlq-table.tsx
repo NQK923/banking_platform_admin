@@ -147,7 +147,7 @@ export function DlqTable() {
                   <TableCell className="font-mono text-xs">
                     p:{msg.partition} o:{msg.offset}
                   </TableCell>
-                  <TableCell className="text-sm text-destructive max-w-xs truncate" title={msg.errorReason}>
+                  <TableCell className="max-w-xs whitespace-normal break-words text-sm text-destructive" title={msg.errorReason}>
                     {msg.errorReason}
                   </TableCell>
                   <TableCell className="text-right">

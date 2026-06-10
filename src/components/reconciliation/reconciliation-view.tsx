@@ -127,7 +127,7 @@ export function ReconciliationView() {
         </CardHeader>
         <CardContent>
           {lastResult && (
-            <div className="mb-6 flex items-center gap-4">
+            <div className="mb-6 flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2 font-medium">
                 Status:
                 <StatusBadge status={lastResult.status === "SUCCESS" ? "BALANCED" : lastResult.status} />
@@ -162,7 +162,7 @@ export function ReconciliationView() {
                 ) : (
                   lastResult.findings.map((finding) => (
                     <TableRow key={finding.accountId}>
-                      <TableCell className="font-mono text-xs">{finding.accountId}</TableCell>
+                      <TableCell className="max-w-[14rem] whitespace-normal break-all font-mono text-xs">{finding.accountId}</TableCell>
                       <TableCell>
                         <StatusBadge status={finding.status} />
                       </TableCell>

@@ -13,20 +13,20 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,var(--accent),transparent_34%),var(--background)] p-4">
-      <Card className="w-full max-w-sm border-border/70 bg-card/95 shadow-xl ring-0 backdrop-blur">
-        <CardHeader className="space-y-1 text-center">
+      <Card className="w-full min-w-0 max-w-xs border-border/70 bg-card/95 shadow-xl ring-0 backdrop-blur sm:max-w-sm">
+        <CardHeader className="min-w-0 space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
               <ShieldCheck className="h-6 w-6" aria-hidden="true" />
             </div>
           </div>
           <CardTitle className="text-2xl font-semibold">Banking Platform Admin</CardTitle>
-          <CardDescription>
+          <CardDescription className="break-words">
             Enter your credentials to access the internal dashboard.
           </CardDescription>
         </CardHeader>
         <form action={formAction}>
-          <CardContent className="space-y-4">
+          <CardContent className="min-w-0 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -54,7 +54,7 @@ export default function LoginPage() {
               </div>
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="min-w-0">
             <Button className="w-full" type="submit" disabled={pending}>
               {pending ? (
                 <>

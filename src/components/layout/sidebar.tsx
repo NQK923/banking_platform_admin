@@ -12,7 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const navItems = [
+export const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Accounts", href: "/accounts", icon: Users },
   { name: "Transactions", href: "/transactions", icon: ArrowRightLeft },
@@ -25,7 +25,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside className="hidden h-full w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
       <div className="flex h-14 items-center border-b border-sidebar-border px-4 lg:h-[60px]">
         <Link href="/" className="flex items-center gap-2 rounded-md font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
