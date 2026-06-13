@@ -33,6 +33,19 @@ const styles: Record<string, string> = {
   DRIFT_DETECTED: "border-red-600/25 bg-red-500/12 text-red-700 dark:text-red-300",
   CREDIT: "border-emerald-600/25 bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
   DEBIT: "border-sky-600/25 bg-sky-500/12 text-sky-700 dark:text-sky-300",
+  LOW: "border-emerald-600/25 bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+  MEDIUM: "border-amber-600/25 bg-amber-500/14 text-amber-800 dark:text-amber-300",
+  HIGH: "border-orange-600/25 bg-orange-500/14 text-orange-800 dark:text-orange-300",
+  CRITICAL: "border-red-600/25 bg-red-500/12 text-red-700 dark:text-red-300",
+  ALLOW: "border-emerald-600/25 bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+  WARN_USER: "border-amber-600/25 bg-amber-500/14 text-amber-800 dark:text-amber-300",
+  STEP_UP_AUTH: "border-orange-600/25 bg-orange-500/14 text-orange-800 dark:text-orange-300",
+  MANUAL_REVIEW: "border-red-600/25 bg-red-500/12 text-red-700 dark:text-red-300",
+  MANUAL_REVIEW_REQUIRED: "border-red-600/25 bg-red-500/12 text-red-700 dark:text-red-300",
+  MANUAL_APPROVED: "border-emerald-600/25 bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+  MANUAL_REJECTED: "border-zinc-500/25 bg-zinc-500/12 text-zinc-700 dark:text-zinc-300",
+  BLOCK: "border-red-600/25 bg-red-500/12 text-red-700 dark:text-red-300",
+  BLOCKED: "border-red-600/25 bg-red-500/12 text-red-700 dark:text-red-300",
 };
 
 const icons: Record<string, typeof CheckCircle2> = {
@@ -52,6 +65,19 @@ const icons: Record<string, typeof CheckCircle2> = {
   DRIFT_DETECTED: AlertCircle,
   CREDIT: CheckCircle2,
   DEBIT: RefreshCcw,
+  LOW: CheckCircle2,
+  MEDIUM: ShieldAlert,
+  HIGH: ShieldAlert,
+  CRITICAL: AlertCircle,
+  ALLOW: CheckCircle2,
+  WARN_USER: ShieldAlert,
+  STEP_UP_AUTH: ShieldAlert,
+  MANUAL_REVIEW: ShieldAlert,
+  MANUAL_REVIEW_REQUIRED: ShieldAlert,
+  MANUAL_APPROVED: CheckCircle2,
+  MANUAL_REJECTED: XCircle,
+  BLOCK: AlertCircle,
+  BLOCKED: AlertCircle,
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {

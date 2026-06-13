@@ -27,10 +27,41 @@ export interface Transaction {
   recipientId: string | null;
   note: string | null;
   failureReason: string | null;
+  reviewStatus?: string | null;
+  riskEvaluationId?: string | null;
   compensated: boolean;
   createdAt: string;
 }
 
+export interface RiskReason {
+  code: string;
+  weight: number;
+  message: string;
+  evidence: Record<string, string>;
+}
+
+export interface RiskEvaluation {
+  id?: string;
+  riskEvaluationId?: string;
+  transactionId?: string | null;
+  senderAccountId: string;
+  receiverAccountId?: string | null;
+  idempotencyKey: string;
+  payloadHash?: string;
+  amount: string | number;
+  currency: string;
+  riskScore: number;
+  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" | string;
+  recommendedAction: "ALLOW" | "WARN_USER" | "STEP_UP_AUTH" | "MANUAL_REVIEW" | "BLOCK" | string;
+  reasons: RiskReason[];
+  features: Record<string, string>;
+  modelVersion: string;
+  policyVersion: string;
+  decisionStatus: string;
+  traceId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 export interface LedgerEntry {
   id: string;
   journalId: string;

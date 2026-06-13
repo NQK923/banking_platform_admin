@@ -10,12 +10,14 @@ import {
   FileText,
   MailWarning,
   ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
 
 export const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Accounts", href: "/accounts", icon: Users },
   { name: "Transactions", href: "/transactions", icon: ArrowRightLeft },
+  { name: "Risk Reviews", href: "/risk", icon: ShieldAlert },
   { name: "Reconciliation", href: "/reconciliation", icon: ShieldCheck },
   { name: "Audit Logs", href: "/audit", icon: FileText },
   { name: "DLQ", href: "/dlq", icon: MailWarning },
