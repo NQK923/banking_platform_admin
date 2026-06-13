@@ -16,10 +16,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = window.localStorage.getItem("admin-locale");
-    if ((saved === "vi" || saved === "en") && saved !== locale) {
+    if (saved === "en") {
       window.setTimeout(() => setLocaleState(saved), 0);
     }
-  }, [locale]);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = locale;
