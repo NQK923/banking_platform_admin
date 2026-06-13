@@ -13,20 +13,27 @@ import {
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
+import type { Dictionary } from "@/lib/i18n";
 
 export const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Accounts", href: "/accounts", icon: Users },
-  { name: "Transactions", href: "/transactions", icon: ArrowRightLeft },
-  { name: "Risk Reviews", href: "/risk", icon: ShieldAlert },
-  { name: "Support", href: "/support", icon: LifeBuoy },
-  { name: "Reconciliation", href: "/reconciliation", icon: ShieldCheck },
-  { name: "Audit Logs", href: "/audit", icon: FileText },
-  { name: "DLQ", href: "/dlq", icon: MailWarning },
-];
+  { labelKey: "dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { labelKey: "accounts", href: "/accounts", icon: Users },
+  { labelKey: "transactions", href: "/transactions", icon: ArrowRightLeft },
+  { labelKey: "riskReviews", href: "/risk", icon: ShieldAlert },
+  { labelKey: "support", href: "/support", icon: LifeBuoy },
+  { labelKey: "reconciliation", href: "/reconciliation", icon: ShieldCheck },
+  { labelKey: "auditLogs", href: "/audit", icon: FileText },
+  { labelKey: "dlq", href: "/dlq", icon: MailWarning },
+] as const;
+
+export function navLabel(dictionary: Dictionary, key: (typeof navItems)[number]["labelKey"]) {
+  return dictionary.nav[key];
+}
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { dictionary } = useLanguage();
 
   return (
     <aside className="hidden h-full w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
@@ -36,19 +43,20 @@ export function Sidebar() {
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
           </span>
           <span className="leading-tight">
-            <span className="block text-sm">Banking Platform</span>
-            <span className="block text-xs font-normal text-muted-foreground">Admin Console</span>
+            <span className="block text-sm">{dictionary.common.appName}</span>
+            <span className="block text-xs font-normal text-muted-foreground">{dictionary.common.adminConsole}</span>
           </span>
         </Link>
       </div>
       <div className="flex-1 overflow-auto py-2">
-        <nav className="grid items-start gap-1 px-2 text-sm font-medium" aria-label="Admin navigation">
+        <nav className="grid items-start gap-1 px-2 text-sm font-medium" aria-label={dictionary.nav.adminNavigation}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname.startsWith(item.href);
+            const label = navLabel(dictionary, item.labelKey);
             return (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -58,7 +66,7 @@ export function Sidebar() {
                 )}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
-                {item.name}
+                {label}
               </Link>
             );
           })}

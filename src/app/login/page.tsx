@@ -7,40 +7,46 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, ShieldCheck } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
+import { LanguageToggle } from "@/components/language-toggle";
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(login, null);
+  const { dictionary } = useLanguage();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,var(--accent),transparent_34%),var(--background)] p-4">
       <Card className="w-full min-w-0 max-w-xs border-border/70 bg-card/95 py-5 shadow-xl ring-0 backdrop-blur sm:max-w-sm">
+        <div className="flex justify-end px-5 sm:px-6">
+          <LanguageToggle />
+        </div>
         <CardHeader className="min-w-0 space-y-1 px-5 text-center sm:px-6">
           <div className="flex justify-center mb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
               <ShieldCheck className="h-6 w-6" aria-hidden="true" />
             </div>
           </div>
-          <CardTitle className="font-sans text-2xl font-extrabold tracking-tight">Banking Platform Admin</CardTitle>
+          <CardTitle className="font-sans text-2xl font-extrabold tracking-tight">{dictionary.login.title}</CardTitle>
           <CardDescription className="break-words">
-            Enter your credentials to access the internal dashboard.
+            {dictionary.login.description}
           </CardDescription>
         </CardHeader>
         <form action={formAction}>
           <CardContent className="min-w-0 space-y-5 px-5 sm:px-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="font-sans font-semibold">Email</Label>
+              <Label htmlFor="email" className="font-sans font-semibold">{dictionary.login.email}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="admin@example.com"
+                placeholder={dictionary.login.placeholder}
                 className="h-10 rounded-md bg-secondary/50 font-sans"
                 required
                 disabled={pending}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="font-sans font-semibold">Password</Label>
+              <Label htmlFor="password" className="font-sans font-semibold">{dictionary.login.password}</Label>
               <Input
                 id="password"
                 name="password"
@@ -63,10 +69,10 @@ export default function LoginPage() {
               {pending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  Authenticating...
+                  {dictionary.login.authenticating}
                 </>
               ) : (
-                "Sign in"
+                dictionary.login.signIn
               )}
             </Button>
           </CardContent>

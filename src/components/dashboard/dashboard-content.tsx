@@ -21,8 +21,10 @@ import { AppCard } from "@/components/admin/app-card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/formatters";
+import { useLanguage } from "@/components/language-provider";
 
 export function DashboardContent() {
+  const { dictionary } = useLanguage();
   const [chartData, setChartData] = useState<
     { time: string; latency: number; failed: number; compensating: number }[]
   >([]);
@@ -62,13 +64,13 @@ export function DashboardContent() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Dashboard"
-        description="Operations and system metrics."
+        title={dictionary.dashboard.title}
+        description={dictionary.dashboard.description}
         actions={
           telemetryUnavailable ? (
             <Badge variant="outline" className="h-7 rounded-md border-amber-600/25 bg-amber-500/10 text-amber-700 dark:text-amber-300">
               <Radio className="h-3 w-3" aria-hidden="true" />
-              Telemetry pending
+              {dictionary.dashboard.telemetryPending}
             </Badge>
           ) : (
             <Badge variant="outline" className="h-7 rounded-md border-emerald-600/25 bg-emerald-500/12 text-emerald-700 dark:text-emerald-300">
@@ -78,7 +80,7 @@ export function DashboardContent() {
                 )}
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
               </span>
-              Polling (5s)
+              {dictionary.dashboard.polling}
             </Badge>
           )
         }
@@ -86,28 +88,28 @@ export function DashboardContent() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Failed Transfers"
+          label={dictionary.dashboard.failedTransfers}
           value={metricValue(data?.transferFailedTotal)}
           icon={AlertTriangle}
           tone="danger"
           isLoading={isLoading}
         />
         <StatCard
-          label="Compensating"
+          label={dictionary.dashboard.compensating}
           value={metricValue(data?.transferCompensatingTotal)}
           icon={Activity}
           tone="warning"
           isLoading={isLoading}
         />
         <StatCard
-          label="DLQ Depth"
+          label={dictionary.dashboard.dlqDepth}
           value={metricValue(data?.walletDlqDepth)}
           icon={ServerCrash}
           tone={telemetryUnavailable ? "neutral" : "danger"}
           isLoading={isLoading}
         />
         <StatCard
-          label="Reconciliation Drift"
+          label={dictionary.dashboard.reconciliationDrift}
           value={metricValue(data?.reconciliationDrift)}
           icon={Scale}
           tone={telemetryUnavailable ? "neutral" : data?.reconciliationDrift && data.reconciliationDrift > 0 ? "danger" : "success"}
@@ -120,7 +122,7 @@ export function DashboardContent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
-              Saga Latency (ms)
+              {dictionary.dashboard.sagaLatency}
             </CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
@@ -167,10 +169,10 @@ export function DashboardContent() {
                 {telemetryUnavailable ? (
                   <div className="max-w-sm px-6 text-center">
                     <Badge variant="outline" className="rounded-md border-amber-600/25 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                      Metrics not configured
+                      {dictionary.dashboard.metricsNotConfigured}
                     </Badge>
                     <p className="mt-3 text-sm text-muted-foreground">
-                      Live telemetry endpoint is not available in this local stack.
+                      {dictionary.dashboard.telemetryUnavailable}
                     </p>
                   </div>
                 ) : (
@@ -189,7 +191,7 @@ export function DashboardContent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-destructive" />
-              Failure Signals
+              {dictionary.dashboard.failureSignals}
             </CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
@@ -229,14 +231,14 @@ export function DashboardContent() {
                 {telemetryUnavailable ? (
                   <div className="max-w-sm px-6 text-center">
                     <Badge variant="outline" className="rounded-md border-amber-600/25 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                      Metrics not configured
+                      {dictionary.dashboard.metricsNotConfigured}
                     </Badge>
                     <p className="mt-3 text-sm text-muted-foreground">
-                      Failure trend charts will appear when the metrics API is wired.
+                      {dictionary.dashboard.failureChartsPending}
                     </p>
                   </div>
                 ) : (
-                  "Collecting failure data..."
+                  dictionary.dashboard.collectingFailureData
                 )}
               </div>
             )}
@@ -246,17 +248,17 @@ export function DashboardContent() {
 
       <AppCard>
         <CardHeader>
-          <CardTitle>Consumer Lag</CardTitle>
+          <CardTitle>{dictionary.dashboard.consumerLag}</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-4">
           <div>
             <div className="numbers font-mono text-4xl font-semibold text-primary">
               {telemetryUnavailable ? "--" : isLoading ? <Skeleton className="h-10 w-24" /> : formatNumber(data?.walletConsumerLag ?? 0)}
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">events behind</p>
+            <p className="mt-1 text-sm text-muted-foreground">{dictionary.dashboard.eventsBehind}</p>
           </div>
           <Badge variant="outline" className="rounded-md">
-            Kafka consumer
+            {dictionary.dashboard.kafkaConsumer}
           </Badge>
         </CardContent>
       </AppCard>
