@@ -18,7 +18,7 @@ export async function getAccounts(page: number = 0, size: number = 10, q?: strin
 }
 
 export async function getAccountDetails(id: string): Promise<Account> {
-  const res = await apiFetch(`/api/accounts/${id}`);
+  const res = await apiFetch(`/api/admin/accounts/${id}`);
   if (!res.ok) {
     throw new Error("Failed to fetch account details");
   }

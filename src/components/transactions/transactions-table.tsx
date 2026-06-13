@@ -128,7 +128,10 @@ export function TransactionsTable() {
             ) : transactions.length === 0 ? (
               <EmptyTableRow colSpan={6} title="No transactions found." description="Try a different status or account filter." />
             ) : (
-              transactions.map((tx) => (
+              transactions.map((tx) => {
+                const recipientId = tx.recipientId ?? tx.receiverId ?? null;
+
+                return (
                 <React.Fragment key={tx.id}>
                   <TableRow 
                     className="cursor-pointer hover:bg-muted/50"
@@ -163,9 +166,9 @@ export function TransactionsTable() {
                       )}
                     </TableCell>
                     <TableCell className="max-w-[9rem] font-mono text-xs">
-                      {tx.recipientId ? (
-                        <Link href={`/accounts/${tx.recipientId}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
-                          {tx.recipientId.substring(0, 8)}...
+                      {recipientId ? (
+                        <Link href={`/accounts/${recipientId}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+                          {recipientId.substring(0, 8)}...
                         </Link>
                       ) : (
                         <span className="text-muted-foreground">SYSTEM</span>
@@ -190,8 +193,12 @@ export function TransactionsTable() {
                             <p className="break-all font-mono text-xs text-muted-foreground">{tx.id}</p>
                           </div>
                           <div>
-                            <p className="mb-1 font-medium">Journal ID</p>
-                            <p className="break-all font-mono text-xs text-muted-foreground">{tx.journalId}</p>
+                            <p className="mb-1 font-medium">Correlation ID</p>
+                            <p className="break-all font-mono text-xs text-muted-foreground">{tx.correlationId || "-"}</p>
+                          </div>
+                          <div>
+                            <p className="mb-1 font-medium">Idempotency Key</p>
+                            <p className="break-all font-mono text-xs text-muted-foreground">{tx.idempotencyKey || "-"}</p>
                           </div>
                           {tx.note && (
                             <div className="col-span-full">
@@ -220,7 +227,8 @@ export function TransactionsTable() {
                     </TableRow>
                   )}
                 </React.Fragment>
-              ))
+                );
+              })
             )}
           </TableBody>
         </Table>

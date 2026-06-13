@@ -8,8 +8,11 @@ export interface PaginatedResponse<T> {
 
 export interface Account {
   id: string;
+  userId?: string | null;
   email: string | null;
   phoneNumber: string | null;
+  code?: string | null;
+  kind?: "USER" | "SYSTEM" | string;
   status: "ACTIVE" | "SUSPENDED" | "CLOSED" | string;
   balance: string | number; // Decimal-as-string; tolerate numeric legacy JSON for display only
   currency: string;
@@ -18,13 +21,16 @@ export interface Account {
 
 export interface Transaction {
   id: string;
-  journalId: string;
+  journalId?: string | null;
+  correlationId?: string | null;
+  idempotencyKey?: string | null;
   amount: string | number; // Decimal-as-string; tolerate numeric legacy JSON for display only
   currency: string;
   status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "COMPENSATING" | "CANCELLED" | string;
   type: string;
   senderId: string | null;
   recipientId: string | null;
+  receiverId?: string | null;
   note: string | null;
   failureReason: string | null;
   reviewStatus?: string | null;
@@ -62,6 +68,7 @@ export interface RiskEvaluation {
   createdAt: string;
   updatedAt: string;
 }
+
 export interface LedgerEntry {
   id: string;
   journalId: string;
@@ -74,11 +81,16 @@ export interface LedgerEntry {
 
 export interface AuditLog {
   id: string;
-  actorId: string | null;
-  action: string | null;
-  targetId: string | null;
-  targetType: string | null;
-  details: string | null;
+  actorId?: string | null;
+  action?: string | null;
+  targetId?: string | null;
+  targetType?: string | null;
+  details?: string | null;
+  entityType?: string | null;
+  entityId?: string | null;
+  eventType?: string | null;
+  actorType?: string | null;
+  payload?: Record<string, string> | null;
   createdAt: string;
 }
 

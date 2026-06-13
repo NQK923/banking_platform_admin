@@ -22,6 +22,13 @@ function shortId(value: string) {
   return value.length > 8 ? `${value.substring(0, 8)}...` : value;
 }
 
+function formatDetails(log: { details?: string | null; payload?: Record<string, string> | null }) {
+  if (log.details) return log.details;
+  if (!log.payload || Object.keys(log.payload).length === 0) return "-";
+  if (typeof log.payload.raw === "string") return log.payload.raw;
+  return JSON.stringify(log.payload);
+}
+
 export function AuditTable() {
   const router = useRouter();
   const pathname = usePathname();
@@ -79,7 +86,10 @@ export function AuditTable() {
             ) : (
               logs.map((log, index) => {
                 const actorId = log.actorId ?? "";
-                const targetId = log.targetId ?? "";
+                const targetId = log.targetId ?? log.entityId ?? "";
+                const targetType = log.targetType ?? log.entityType ?? "";
+                const action = log.action ?? log.eventType ?? "-";
+                const details = formatDetails(log);
                 const isSystemActor = actorId === "" || actorId.toLowerCase().startsWith("sys");
 
                 return (
@@ -97,11 +107,11 @@ export function AuditTable() {
                     )}
                   </TableCell>
                   <TableCell className="max-w-[14rem] whitespace-normal break-words text-sm font-medium">
-                    {log.action || "-"}
+                    {action}
                   </TableCell>
                   <TableCell className="max-w-[9rem] font-mono text-xs">
                     {targetId ? (
-                      log.targetType === "ACCOUNT" ? (
+                      targetType === "ACCOUNT" ? (
                         <Link href={`/accounts/${targetId}`} className="text-primary hover:underline">
                           {shortId(targetId)}
                         </Link>
@@ -112,8 +122,8 @@ export function AuditTable() {
                       <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
-                  <TableCell className="max-w-xs whitespace-normal break-words text-sm text-muted-foreground" title={log.details || ""}>
-                    {log.details || "-"}
+                  <TableCell className="max-w-xs whitespace-normal break-words text-sm text-muted-foreground" title={details}>
+                    {details}
                   </TableCell>
                 </TableRow>
                 );

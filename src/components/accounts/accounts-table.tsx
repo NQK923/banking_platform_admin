@@ -84,7 +84,7 @@ export function AccountsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Email / Phone</TableHead>
+              <TableHead>Account</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Balance</TableHead>
               <TableHead className="text-right">Created At</TableHead>
@@ -101,9 +101,14 @@ export function AccountsTable() {
               accounts.map((account) => (
                 <TableRow key={account.id}>
                   <TableCell className="font-medium">
-                    <Link href={`/accounts/${account.id}`} className="hover:underline text-primary">
-                      {account.email || account.phoneNumber || account.id}
-                    </Link>
+                    <div className="space-y-1">
+                      <Link href={`/accounts/${account.id}`} className="hover:underline text-primary">
+                        {account.email || account.phoneNumber || account.code || account.id}
+                      </Link>
+                      <div className="font-mono text-xs font-normal text-muted-foreground">
+                        {account.kind || "ACCOUNT"} - {account.id.substring(0, 8)}...
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={account.status} />

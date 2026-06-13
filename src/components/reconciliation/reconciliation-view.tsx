@@ -41,6 +41,7 @@ import { EmptyTableRow } from "@/components/admin/state-views";
 
 export function ReconciliationView() {
   const [lastResult, setLastResult] = useState<ReconciliationResult | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const runMutation = useMutation({
     mutationFn: runReconciliation,
@@ -57,6 +58,9 @@ export function ReconciliationView() {
     onError: (error: Error) => {
       toast.error(error.message || "Failed to run reconciliation");
     },
+    onSettled: () => {
+      setConfirmOpen(false);
+    },
   });
 
   return (
@@ -65,7 +69,7 @@ export function ReconciliationView() {
         title="Reconciliation"
         description="Verify ledger and projection integrity."
         actions={
-        <AlertDialog>
+        <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
           <AlertDialogTrigger render={
             <Button disabled={runMutation.isPending}>
               {runMutation.isPending ? (

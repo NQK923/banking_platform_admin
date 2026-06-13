@@ -85,7 +85,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               <ArrowLeft className="h-4 w-4" />
             </Link>
             {account ? <StatusBadge status={account.status} /> : null}
-            {account && account.status !== "SUSPENDED" ? (
+            {account && account.kind !== "SYSTEM" && account.status !== "SUSPENDED" ? (
             <AlertDialog>
               <AlertDialogTrigger render={
                 <Button variant="destructive">
@@ -133,8 +133,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       <div className="grid gap-6 md:grid-cols-2">
         <AppCard>
           <CardHeader>
-            <CardTitle>Profile Info</CardTitle>
-            <CardDescription>Contact and status information</CardDescription>
+            <CardTitle>Account Info</CardTitle>
+            <CardDescription>Identity, ownership, and status information</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {isAccountLoading ? (
@@ -144,6 +144,22 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               </div>
             ) : account ? (
               <dl className="grid grid-cols-1 gap-x-4 gap-y-4 text-sm sm:grid-cols-[8rem_minmax(0,1fr)]">
+                <dt className="font-medium text-muted-foreground">Account ID</dt>
+                <dd className="min-w-0 break-all font-mono text-xs">{account.id}</dd>
+                <dt className="font-medium text-muted-foreground">Kind</dt>
+                <dd>{account.kind || "ACCOUNT"}</dd>
+                {account.code ? (
+                  <>
+                    <dt className="font-medium text-muted-foreground">Code</dt>
+                    <dd className="min-w-0 break-words font-mono text-xs">{account.code}</dd>
+                  </>
+                ) : null}
+                {account.userId ? (
+                  <>
+                    <dt className="font-medium text-muted-foreground">User ID</dt>
+                    <dd className="min-w-0 break-all font-mono text-xs">{account.userId}</dd>
+                  </>
+                ) : null}
                 <dt className="font-medium text-muted-foreground">Email</dt>
                 <dd className="min-w-0 break-words">{account.email || "N/A"}</dd>
                 <dt className="font-medium text-muted-foreground">Phone</dt>

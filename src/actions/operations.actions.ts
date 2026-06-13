@@ -6,6 +6,7 @@ import {
   AuditLog,
   DlqMessage,
   PaginatedResponse,
+  ReconciliationFinding,
   ReconciliationResult,
   SystemMetrics,
 } from "@/lib/types";
@@ -17,7 +18,29 @@ export async function runReconciliation(): Promise<ReconciliationResult> {
   if (!res.ok) {
     throw new Error("Failed to run reconciliation");
   }
-  return res.json();
+  const payload = await res.json();
+  const findings: ReconciliationFinding[] = Array.isArray(payload.findings)
+    ? payload.findings.map((finding: unknown) => {
+        if (typeof finding === "object" && finding !== null) {
+          return finding as ReconciliationFinding;
+        }
+        const text = String(finding);
+        return {
+          accountId: text,
+          ledgerBalance: "0",
+          cachedBalance: "0",
+          drift: "0",
+          status: "DRIFT",
+        };
+      })
+    : [];
+
+  return {
+    timestamp: payload.timestamp || payload.checkedAt || new Date().toISOString(),
+    status: payload.status || (payload.zeroDrift ? "SUCCESS" : "DRIFT_DETECTED"),
+    driftCount: typeof payload.driftCount === "number" ? payload.driftCount : findings.length,
+    findings,
+  };
 }
 
 export async function getDlqMessages(
