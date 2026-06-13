@@ -17,6 +17,7 @@ import { DataTableShell } from "@/components/admin/data-table";
 import { PaginationControls } from "@/components/admin/pagination-controls";
 import { Timestamp } from "@/components/admin/timestamp";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
+import { useLanguage } from "@/components/language-provider";
 
 function shortId(value: string) {
   return value.length > 8 ? `${value.substring(0, 8)}...` : value;
@@ -30,6 +31,7 @@ function formatDetails(log: { details?: string | null; payload?: Record<string, 
 }
 
 export function AuditTable() {
+  const { dictionary: t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -69,20 +71,20 @@ export function AuditTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Actor</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Target</TableHead>
-              <TableHead>Details</TableHead>
+              <TableHead>{t.table.time}</TableHead>
+              <TableHead>{t.table.actor}</TableHead>
+              <TableHead>{t.table.action}</TableHead>
+              <TableHead>{t.table.target}</TableHead>
+              <TableHead>{t.table.auditDetails}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableSkeletonRows rows={15} columns={5} />
             ) : isError ? (
-              <ErrorTableRow colSpan={5} title="Error loading audit logs." onRetry={() => refetch()} />
+              <ErrorTableRow colSpan={5} title={t.table.auditError} onRetry={() => refetch()} />
             ) : logs.length === 0 ? (
-              <EmptyTableRow colSpan={5} title="No audit logs found." description="Audited admin activity will appear here." />
+              <EmptyTableRow colSpan={5} title={t.table.auditEmpty} description={t.table.auditEmptyDescription} />
             ) : (
               logs.map((log, index) => {
                 const actorId = log.actorId ?? "";
@@ -99,7 +101,7 @@ export function AuditTable() {
                   </TableCell>
                   <TableCell className="max-w-[9rem] font-mono text-xs">
                     {isSystemActor ? (
-                      <span className="text-muted-foreground">{actorId || "SYSTEM"}</span>
+                      <span className="text-muted-foreground">{actorId || t.common.system}</span>
                     ) : (
                       <Link href={`/accounts/${actorId}`} className="text-primary hover:underline">
                         {shortId(actorId)}

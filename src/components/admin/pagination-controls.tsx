@@ -1,5 +1,8 @@
+"use client";
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { formatNumber } from "@/lib/formatters";
 
@@ -20,11 +23,15 @@ export function PaginationControls({
   onPrevious,
   onNext,
 }: PaginationControlsProps) {
+  const { dictionary: t } = useLanguage();
+  const summary = t.pagination.showing
+    .replace("{page}", String(page))
+    .replace("{totalPages}", String(totalPages || 1))
+    .replace("{totalElements}", formatNumber(totalElements || 0));
+
   return (
     <div className="flex min-w-0 flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-      <div className="truncate">
-        Showing page {page} of {totalPages || 1} (Total: {formatNumber(totalElements || 0)})
-      </div>
+      <div className="truncate">{summary}</div>
       <div className="flex shrink-0 items-center gap-2">
         <Button
           variant="outline"
@@ -33,7 +40,7 @@ export function PaginationControls({
           disabled={page === 1 || isLoading}
         >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-          Previous
+          {t.pagination.previous}
         </Button>
         <Button
           variant="outline"
@@ -41,7 +48,7 @@ export function PaginationControls({
           onClick={onNext}
           disabled={page >= (totalPages || 1) || isLoading}
         >
-          Next
+          {t.pagination.next}
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>

@@ -23,8 +23,10 @@ import { PaginationControls } from "@/components/admin/pagination-controls";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Timestamp } from "@/components/admin/timestamp";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
+import { useLanguage } from "@/components/language-provider";
 
 export function TransactionsTable() {
+  const { dictionary: t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -72,7 +74,7 @@ export function TransactionsTable() {
     <DataTableShell
       toolbar={
         <Toolbar
-          searchPlaceholder="Filter by Account ID..."
+          searchPlaceholder={t.filters.accountId}
           searchValue={accountId}
           onSearchChange={(value) => {
             setAccountId(value);
@@ -80,7 +82,7 @@ export function TransactionsTable() {
           }}
         >
         <select
-          aria-label="Filter by transaction status"
+          aria-label={t.filters.transactionStatus}
           className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
           value={status}
           onChange={(e) => {
@@ -88,13 +90,13 @@ export function TransactionsTable() {
             setPage(1);
           }}
         >
-          <option value="ALL">All Statuses</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="PENDING">Pending</option>
-          <option value="PROCESSING">Processing</option>
-          <option value="FAILED">Failed</option>
-          <option value="COMPENSATING">Compensating</option>
-          <option value="CANCELLED">Cancelled</option>
+          <option value="ALL">{t.filters.allStatuses}</option>
+          <option value="COMPLETED">{t.status.COMPLETED}</option>
+          <option value="PENDING">{t.status.PENDING}</option>
+          <option value="PROCESSING">{t.status.PROCESSING}</option>
+          <option value="FAILED">{t.status.FAILED}</option>
+          <option value="COMPENSATING">{t.status.COMPENSATING}</option>
+          <option value="CANCELLED">{t.status.CANCELLED}</option>
         </select>
         </Toolbar>
       }
@@ -113,20 +115,20 @@ export function TransactionsTable() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]"></TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Sender</TableHead>
-              <TableHead>Recipient</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>{t.table.createdAt}</TableHead>
+              <TableHead>{t.table.status}</TableHead>
+              <TableHead>{t.table.sender}</TableHead>
+              <TableHead>{t.table.recipient}</TableHead>
+              <TableHead className="text-right">{t.table.amount}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableSkeletonRows columns={6} />
             ) : isError ? (
-              <ErrorTableRow colSpan={6} title="Error loading transactions." onRetry={() => refetch()} />
+              <ErrorTableRow colSpan={6} title={t.state.transactionsError} onRetry={() => refetch()} />
             ) : transactions.length === 0 ? (
-              <EmptyTableRow colSpan={6} title="No transactions found." description="Try a different status or account filter." />
+              <EmptyTableRow colSpan={6} title={t.state.transactionsEmpty} description={t.state.transactionsEmptyDescription} />
             ) : (
               transactions.map((tx) => {
                 const recipientId = tx.recipientId ?? tx.receiverId ?? null;
@@ -141,7 +143,7 @@ export function TransactionsTable() {
                       <Button
                         variant="ghost"
                         size="icon-xs"
-                        aria-label={expandedRow === tx.id ? "Collapse transaction details" : "Expand transaction details"}
+                        aria-label={expandedRow === tx.id ? t.actions.collapseTransaction : t.actions.expandTransaction}
                         onClick={(event) => {
                           event.stopPropagation();
                           setExpandedRow(expandedRow === tx.id ? null : tx.id);
@@ -162,7 +164,7 @@ export function TransactionsTable() {
                           {tx.senderId.substring(0, 8)}...
                         </Link>
                       ) : (
-                        <span className="text-muted-foreground">SYSTEM</span>
+                        <span className="text-muted-foreground">{t.common.system}</span>
                       )}
                     </TableCell>
                     <TableCell className="max-w-[9rem] font-mono text-xs">
@@ -171,7 +173,7 @@ export function TransactionsTable() {
                           {recipientId.substring(0, 8)}...
                         </Link>
                       ) : (
-                        <span className="text-muted-foreground">SYSTEM</span>
+                        <span className="text-muted-foreground">{t.common.system}</span>
                       )}
                     </TableCell>
                     <TableCell className="numbers text-right font-mono font-medium">
@@ -183,26 +185,26 @@ export function TransactionsTable() {
                       <TableCell colSpan={6} className="p-0">
                         <div className="border-l-2 border-primary/40 p-4 text-sm">
                           <div className="mb-4 flex flex-wrap items-center gap-2">
-                            <p className="font-semibold">Transaction detail</p>
+                            <p className="font-semibold">{t.detail.transactionDetail}</p>
                             <StatusBadge status={tx.status} />
-                            {tx.compensated ? <StatusBadge status="Refunded" /> : null}
+                            {tx.compensated ? <StatusBadge status="REFUNDED" /> : null}
                           </div>
                           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div>
-                            <p className="mb-1 font-medium">Transaction ID</p>
+                            <p className="mb-1 font-medium">{t.table.transactionId}</p>
                             <p className="break-all font-mono text-xs text-muted-foreground">{tx.id}</p>
                           </div>
                           <div>
-                            <p className="mb-1 font-medium">Correlation ID</p>
+                            <p className="mb-1 font-medium">{t.table.correlationId}</p>
                             <p className="break-all font-mono text-xs text-muted-foreground">{tx.correlationId || "-"}</p>
                           </div>
                           <div>
-                            <p className="mb-1 font-medium">Idempotency Key</p>
+                            <p className="mb-1 font-medium">{t.table.idempotencyKey}</p>
                             <p className="break-all font-mono text-xs text-muted-foreground">{tx.idempotencyKey || "-"}</p>
                           </div>
                           {tx.note && (
                             <div className="col-span-full">
-                              <p className="mb-1 font-medium">Note</p>
+                              <p className="mb-1 font-medium">{t.table.note}</p>
                               <p className="whitespace-normal break-words text-muted-foreground italic">&quot;{tx.note}&quot;</p>
                             </div>
                           )}
@@ -210,7 +212,7 @@ export function TransactionsTable() {
                             <div className="col-span-full flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-destructive">
                               <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
                               <div>
-                                <p className="font-medium">Failure Reason</p>
+                                <p className="font-medium">{t.table.failureReason}</p>
                                 <p className="whitespace-normal break-words">{tx.failureReason}</p>
                               </div>
                             </div>
@@ -218,7 +220,7 @@ export function TransactionsTable() {
                           {tx.compensated && (
                             <div className="col-span-full flex items-center gap-2 rounded-md border border-emerald-600/20 bg-emerald-500/10 p-3 text-emerald-700 dark:text-emerald-300">
                               <RefreshCw className="h-4 w-4" />
-                              <span className="font-medium">Refunded / Compensated successfully</span>
+                              <span className="font-medium">{t.detail.refundedCompensated}</span>
                             </div>
                           )}
                           </div>

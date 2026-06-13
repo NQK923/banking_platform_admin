@@ -31,8 +31,10 @@ import { DataTableShell } from "@/components/admin/data-table";
 import { PaginationControls } from "@/components/admin/pagination-controls";
 import { Timestamp } from "@/components/admin/timestamp";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
+import { useLanguage } from "@/components/language-provider";
 
 export function DlqTable() {
+  const { dictionary: t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -61,11 +63,11 @@ export function DlqTable() {
     mutationFn: (params: { partition?: number; offset?: number; replayAll: boolean }) =>
       replayDlqMessage(params.partition, params.offset, params.replayAll),
     onSuccess: (_, variables) => {
-      toast.success(variables.replayAll ? "Bulk replay initiated" : "Message replayed successfully");
+      toast.success(variables.replayAll ? t.dlq.bulkReplayStarted : t.dlq.messageReplayed);
       queryClient.invalidateQueries({ queryKey: ["dlq"] });
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to replay message(s)");
+      toast.error(error.message || t.dlq.replayFailed);
     },
   });
 
@@ -76,21 +78,21 @@ export function DlqTable() {
           <AlertDialogTrigger render={
             <Button variant="destructive" disabled={messages.length === 0 || replayMutation.isPending}>
               <ShieldAlert className="h-4 w-4 mr-2" />
-              Replay All
+              {t.actions.replayAll}
             </Button>
           } />
           <AlertDialogContent className="border-destructive/30">
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2 text-destructive">
                 <ShieldAlert className="h-5 w-5" aria-hidden="true" />
-                Replay all dead-letter messages?
+                {t.dlq.replayAllQuestion}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                This will trigger a bulk replay of all messages currently in the DLQ. Ensure the underlying issue causing the failures has been resolved.
+                {t.dlq.replayAllDescription}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
               <AlertDialogAction
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 onClick={(e) => {
@@ -102,10 +104,10 @@ export function DlqTable() {
                 {replayMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    Replaying...
+                    {t.actions.replaying}
                   </>
                 ) : (
-                  "Confirm Bulk Replay"
+                  t.actions.confirmBulkReplay
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -128,20 +130,20 @@ export function DlqTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Created At</TableHead>
-              <TableHead>Event Type</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Error Reason</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{t.table.createdAt}</TableHead>
+              <TableHead>{t.table.eventType}</TableHead>
+              <TableHead>{t.table.location}</TableHead>
+              <TableHead>{t.table.reason}</TableHead>
+              <TableHead className="text-right">{t.table.action}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableSkeletonRows columns={5} actionColumn />
             ) : isError ? (
-              <ErrorTableRow colSpan={5} title="Error loading DLQ messages." onRetry={() => refetch()} />
+              <ErrorTableRow colSpan={5} title={t.state.dlqError} onRetry={() => refetch()} />
             ) : messages.length === 0 ? (
-              <EmptyTableRow colSpan={5} title="The DLQ is currently empty." description="Failed event messages will appear here for replay." />
+              <EmptyTableRow colSpan={5} title={t.state.dlqEmpty} description={t.state.dlqEmptyDescription} />
             ) : (
               messages.map((msg) => (
                 <TableRow key={msg.eventId}>
@@ -160,21 +162,24 @@ export function DlqTable() {
                       <AlertDialogTrigger render={
                         <Button variant="secondary" size="sm" disabled={replayMutation.isPending}>
                           <RotateCcw className="h-3 w-3 mr-1" />
-                          Replay
+                          {t.actions.replay}
                         </Button>
                       } />
                       <AlertDialogContent className="border-destructive/30">
                         <AlertDialogHeader>
                           <AlertDialogTitle className="flex items-center gap-2 text-destructive">
                             <ShieldAlert className="h-5 w-5" aria-hidden="true" />
-                            Replay single message?
+                            {t.dlq.replaySingleQuestion}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to replay the `{msg.eventType}` event from partition {msg.partition}, offset {msg.offset}?
+                            {t.dlq.replaySingleDescription
+                              .replace("{eventType}", msg.eventType)
+                              .replace("{partition}", String(msg.partition))
+                              .replace("{offset}", String(msg.offset))}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={(e) => {
                               e.preventDefault();
@@ -185,10 +190,10 @@ export function DlqTable() {
                             {replayMutation.isPending ? (
                               <>
                                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                                Replaying...
+                                {t.actions.replaying}
                               </>
                             ) : (
-                              "Replay Message"
+                              t.actions.replayMessage
                             )}
                           </AlertDialogAction>
                         </AlertDialogFooter>

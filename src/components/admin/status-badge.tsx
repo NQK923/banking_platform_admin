@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertCircle,
   CheckCircle2,
@@ -9,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/language-provider";
 import { cn } from "@/lib/utils";
 
 type StatusBadgeProps = {
@@ -81,8 +84,10 @@ const icons: Record<string, typeof CheckCircle2> = {
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  const { dictionary } = useLanguage();
   const normalized = status.toUpperCase();
   const Icon = icons[normalized] ?? Clock3;
+  const label = dictionary.status[normalized] ?? status;
 
   return (
     <Badge
@@ -90,7 +95,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       className={cn("h-6 rounded-md border px-2 font-medium tracking-normal", styles[normalized], className)}
     >
       <Icon className="h-3 w-3" aria-hidden="true" />
-      {status}
+      {label}
     </Badge>
   );
 }

@@ -19,6 +19,7 @@ import { PaginationControls } from "@/components/admin/pagination-controls";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Timestamp } from "@/components/admin/timestamp";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
+import { useLanguage } from "@/components/language-provider";
 import { buttonVariants } from "@/components/ui/button";
 
 const topics = [
@@ -34,6 +35,7 @@ const topics = [
 ];
 
 export function SupportCasesTable() {
+  const { dictionary: t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -73,9 +75,9 @@ export function SupportCasesTable() {
   return (
     <DataTableShell
       toolbar={
-        <Toolbar searchPlaceholder="Search is not available for support cases yet">
+        <Toolbar searchPlaceholder={t.filters.supportSearchUnavailable}>
           <select
-            aria-label="Filter by case status"
+            aria-label={t.filters.caseStatus}
             className="flex h-9 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[180px]"
             value={status}
             onChange={(event) => {
@@ -83,14 +85,14 @@ export function SupportCasesTable() {
               setPage(1);
             }}
           >
-            <option value="ALL">All Statuses</option>
-            <option value="OPEN">Open</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="RESOLVED">Resolved</option>
-            <option value="CLOSED">Closed</option>
+            <option value="ALL">{t.filters.allStatuses}</option>
+            <option value="OPEN">{t.status.OPEN}</option>
+            <option value="IN_PROGRESS">{t.status.IN_PROGRESS}</option>
+            <option value="RESOLVED">{t.status.RESOLVED}</option>
+            <option value="CLOSED">{t.status.CLOSED}</option>
           </select>
           <select
-            aria-label="Filter by support topic"
+            aria-label={t.filters.supportTopic}
             className="flex h-9 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[220px]"
             value={topic}
             onChange={(event) => {
@@ -99,7 +101,7 @@ export function SupportCasesTable() {
             }}
           >
             {topics.map((item) => (
-              <option key={item} value={item}>{item === "ALL" ? "All Topics" : item}</option>
+              <option key={item} value={item}>{t.topics[item] ?? item}</option>
             ))}
           </select>
         </Toolbar>
@@ -118,38 +120,38 @@ export function SupportCasesTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Created</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Topic</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Transaction</TableHead>
-            <TableHead>Assigned</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead>{t.table.created}</TableHead>
+            <TableHead>{t.table.status}</TableHead>
+            <TableHead>{t.table.topic}</TableHead>
+            <TableHead>{t.table.user}</TableHead>
+            <TableHead>{t.table.transaction}</TableHead>
+            <TableHead>{t.table.assigned}</TableHead>
+            <TableHead className="text-right">{t.table.action}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableSkeletonRows columns={7} />
           ) : isError ? (
-            <ErrorTableRow colSpan={7} title="Error loading support cases." onRetry={() => refetch()} />
+            <ErrorTableRow colSpan={7} title={t.state.supportError} onRetry={() => refetch()} />
           ) : !data?.items.length ? (
-            <EmptyTableRow colSpan={7} title="No support cases found." description="Cases appear here after a user requests human support." />
+            <EmptyTableRow colSpan={7} title={t.state.supportEmpty} description={t.state.supportEmptyDescription} />
           ) : (
             data.items.map((item) => (
               <TableRow key={item.caseId}>
                 <TableCell><Timestamp value={item.createdAt} /></TableCell>
                 <TableCell><StatusBadge status={item.status} /></TableCell>
-                <TableCell className="font-medium">{item.topic}</TableCell>
+                <TableCell className="font-medium">{t.topics[item.topic] ?? item.topic}</TableCell>
                 <TableCell className="max-w-[9rem] break-all font-mono text-xs">{short(item.userId)}</TableCell>
                 <TableCell className="max-w-[9rem] break-all font-mono text-xs">
                   {item.relatedTransactionId ? short(item.relatedTransactionId) : "-"}
                 </TableCell>
                 <TableCell className="max-w-[9rem] break-all font-mono text-xs">
-                  {item.assignedAdminId ? short(item.assignedAdminId) : "Unassigned"}
+                  {item.assignedAdminId ? short(item.assignedAdminId) : t.common.unassigned}
                 </TableCell>
                 <TableCell className="text-right">
                   <Link className={buttonVariants({ size: "sm", variant: "outline" })} href={`/support/${item.caseId}`}>
-                    Open
+                    {t.actions.open}
                   </Link>
                 </TableCell>
               </TableRow>

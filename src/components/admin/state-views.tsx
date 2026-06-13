@@ -1,6 +1,9 @@
+"use client";
+
 import type { ComponentType } from "react";
 import { AlertCircle, Inbox } from "lucide-react";
 
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -64,6 +67,8 @@ type ErrorTableRowProps = {
 };
 
 export function ErrorTableRow({ colSpan, title, onRetry }: ErrorTableRowProps) {
+  const { dictionary: t } = useLanguage();
+
   return (
     <TableRow>
       <TableCell colSpan={colSpan} className="py-12">
@@ -73,10 +78,10 @@ export function ErrorTableRow({ colSpan, title, onRetry }: ErrorTableRowProps) {
           </div>
           <div className="space-y-1">
             <p className="font-medium text-foreground">{title}</p>
-            <p className="text-sm text-muted-foreground">The request failed. Try again when the service is reachable.</p>
+            <p className="text-sm text-muted-foreground">{t.state.requestFailed}</p>
           </div>
           <Button variant="outline" size="sm" onClick={onRetry}>
-            Retry
+            {t.common.retry}
           </Button>
         </div>
       </TableCell>

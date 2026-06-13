@@ -41,8 +41,10 @@ import { StatusBadge } from "@/components/admin/status-badge";
 import { Timestamp } from "@/components/admin/timestamp";
 import { DataTableShell } from "@/components/admin/data-table";
 import { EmptyTableRow, TableSkeletonRows } from "@/components/admin/state-views";
+import { useLanguage } from "@/components/language-provider";
 
 export default function AccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { dictionary: t } = useLanguage();
   const resolvedParams = use(params);
   const accountId = resolvedParams.id;
   const queryClient = useQueryClient();
@@ -60,26 +62,26 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   const suspendMutation = useMutation({
     mutationFn: () => suspendAccount(accountId),
     onSuccess: () => {
-      toast.success("Account suspended successfully");
+      toast.success(t.detail.accountSuspended);
       queryClient.invalidateQueries({ queryKey: ["account", accountId] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to suspend account");
+      toast.error(error.message || t.detail.suspendFailed);
     },
   });
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Account Details"
+        title={t.detail.accountDetails}
         description={accountId}
-        breadcrumbs={[{ label: "Accounts", href: "/accounts" }, { label: "Detail" }]}
+        breadcrumbs={[{ label: t.nav.accounts, href: "/accounts" }, { label: t.detail.accountDetails }]}
         actions={
           <>
             <Link
               href="/accounts"
-              aria-label="Back to accounts"
+              aria-label={t.actions.backToAccounts}
               className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -90,21 +92,21 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               <AlertDialogTrigger render={
                 <Button variant="destructive">
                   <ShieldAlert className="h-4 w-4 mr-2" />
-                  Suspend Account
+                  {t.actions.suspendAccount}
                 </Button>
               } />
               <AlertDialogContent className="border-destructive/30">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="flex items-center gap-2 text-destructive">
                     <ShieldAlert className="h-5 w-5" aria-hidden="true" />
-                    Suspend this account?
+                    {t.detail.suspendAccountQuestion}
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action will suspend the account. The user will no longer be able to perform transactions or login. This action is audited.
+                    {t.detail.suspendAccountDescription}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     onClick={(e) => {
@@ -116,10 +118,10 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                     {suspendMutation.isPending ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                        Suspending...
+                        {t.detail.suspending}
                       </>
                     ) : (
-                      "Confirm Suspend"
+                      t.actions.confirmSuspend
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -133,8 +135,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       <div className="grid gap-6 md:grid-cols-2">
         <AppCard>
           <CardHeader>
-            <CardTitle>Account Info</CardTitle>
-            <CardDescription>Identity, ownership, and status information</CardDescription>
+            <CardTitle>{t.detail.accountInfo}</CardTitle>
+            <CardDescription>{t.detail.accountInfoDescription}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {isAccountLoading ? (
@@ -144,31 +146,31 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               </div>
             ) : account ? (
               <dl className="grid grid-cols-1 gap-x-4 gap-y-4 text-sm sm:grid-cols-[8rem_minmax(0,1fr)]">
-                <dt className="font-medium text-muted-foreground">Account ID</dt>
+                <dt className="font-medium text-muted-foreground">{t.table.accountId}</dt>
                 <dd className="min-w-0 break-all font-mono text-xs">{account.id}</dd>
-                <dt className="font-medium text-muted-foreground">Kind</dt>
+                <dt className="font-medium text-muted-foreground">{t.table.kind}</dt>
                 <dd>{account.kind || "ACCOUNT"}</dd>
                 {account.code ? (
                   <>
-                    <dt className="font-medium text-muted-foreground">Code</dt>
+                    <dt className="font-medium text-muted-foreground">{t.table.code}</dt>
                     <dd className="min-w-0 break-words font-mono text-xs">{account.code}</dd>
                   </>
                 ) : null}
                 {account.userId ? (
                   <>
-                    <dt className="font-medium text-muted-foreground">User ID</dt>
+                    <dt className="font-medium text-muted-foreground">{t.table.userId}</dt>
                     <dd className="min-w-0 break-all font-mono text-xs">{account.userId}</dd>
                   </>
                 ) : null}
-                <dt className="font-medium text-muted-foreground">Email</dt>
+                <dt className="font-medium text-muted-foreground">{t.table.email}</dt>
                 <dd className="min-w-0 break-words">{account.email || "N/A"}</dd>
-                <dt className="font-medium text-muted-foreground">Phone</dt>
+                <dt className="font-medium text-muted-foreground">{t.table.phone}</dt>
                 <dd className="min-w-0 break-words">{account.phoneNumber || "N/A"}</dd>
-                <dt className="font-medium text-muted-foreground">Status</dt>
+                <dt className="font-medium text-muted-foreground">{t.table.status}</dt>
                 <dd>
                   <StatusBadge status={account.status} />
                 </dd>
-                <dt className="font-medium text-muted-foreground">Created At</dt>
+                <dt className="font-medium text-muted-foreground">{t.table.createdAt}</dt>
                 <dd><Timestamp value={account.createdAt} /></dd>
               </dl>
             ) : null}
@@ -177,8 +179,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
 
         <AppCard>
           <CardHeader>
-            <CardTitle>Wallet Balance</CardTitle>
-            <CardDescription>Current available funds</CardDescription>
+            <CardTitle>{t.table.walletBalance}</CardTitle>
+            <CardDescription>{t.detail.currentAvailableFunds}</CardDescription>
           </CardHeader>
           <CardContent className="flex items-center h-full pb-10">
             {isAccountLoading ? (
@@ -194,25 +196,25 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
 
       <AppCard>
         <CardHeader>
-          <CardTitle>Raw Ledger</CardTitle>
-          <CardDescription>Double-entry accounting records (authoritative)</CardDescription>
+          <CardTitle>{t.detail.rawLedger}</CardTitle>
+          <CardDescription>{t.detail.rawLedgerDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTableShell>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Journal ID</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>{t.table.createdAt}</TableHead>
+                  <TableHead>{t.table.journalId}</TableHead>
+                  <TableHead>{t.table.type}</TableHead>
+                  <TableHead className="text-right">{t.table.amount}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLedgerLoading ? (
                   <TableSkeletonRows rows={3} columns={4} />
                 ) : ledger?.length === 0 ? (
-                  <EmptyTableRow colSpan={4} title="No ledger entries found." description="Authoritative entries will appear after movement." />
+                  <EmptyTableRow colSpan={4} title={t.detail.ledgerEmpty} description={t.detail.ledgerEmptyDescription} />
                 ) : (
                   ledger?.map((entry) => (
                     <TableRow key={entry.id}>

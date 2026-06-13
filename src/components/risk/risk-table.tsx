@@ -16,6 +16,7 @@ import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/ad
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Timestamp } from "@/components/admin/timestamp";
 import { Toolbar } from "@/components/admin/toolbar";
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -31,6 +32,7 @@ function riskId(item: { id?: string; riskEvaluationId?: string }) {
 }
 
 export function RiskTable() {
+  const { dictionary: t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -80,7 +82,7 @@ export function RiskTable() {
   const evaluations = data?.items ?? [];
 
   const requestReason = (label: string) => {
-    const reason = window.prompt(`${label} reason`);
+    const reason = window.prompt(label);
     return reason && reason.trim().length > 0 ? reason.trim() : null;
   };
 
@@ -89,7 +91,7 @@ export function RiskTable() {
       toolbar={
         <Toolbar>
           <select
-            aria-label="Filter by risk level"
+            aria-label={t.filters.riskLevel}
             className="flex h-9 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={level}
             onChange={(event) => {
@@ -97,14 +99,14 @@ export function RiskTable() {
               setPage(1);
             }}
           >
-            <option value="ALL">All levels</option>
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-            <option value="CRITICAL">Critical</option>
+            <option value="ALL">{t.filters.allLevels}</option>
+            <option value="LOW">{t.status.LOW}</option>
+            <option value="MEDIUM">{t.status.MEDIUM}</option>
+            <option value="HIGH">{t.status.HIGH}</option>
+            <option value="CRITICAL">{t.status.CRITICAL}</option>
           </select>
           <select
-            aria-label="Filter by recommended action"
+            aria-label={t.filters.recommendedAction}
             className="flex h-9 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={action}
             onChange={(event) => {
@@ -112,12 +114,12 @@ export function RiskTable() {
               setPage(1);
             }}
           >
-            <option value="ALL">All actions</option>
-            <option value="ALLOW">Allow</option>
-            <option value="WARN_USER">Warn user</option>
-            <option value="STEP_UP_AUTH">Step-up auth</option>
-            <option value="MANUAL_REVIEW">Manual review</option>
-            <option value="BLOCK">Block</option>
+            <option value="ALL">{t.filters.allActions}</option>
+            <option value="ALLOW">{t.status.ALLOW}</option>
+            <option value="WARN_USER">{t.status.WARN_USER}</option>
+            <option value="STEP_UP_AUTH">{t.status.STEP_UP_AUTH}</option>
+            <option value="MANUAL_REVIEW">{t.status.MANUAL_REVIEW}</option>
+            <option value="BLOCK">{t.status.BLOCK}</option>
           </select>
         </Toolbar>
       }
@@ -135,24 +137,24 @@ export function RiskTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Created</TableHead>
-            <TableHead>Risk</TableHead>
-            <TableHead>Action</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Reasons</TableHead>
-            <TableHead className="text-right">Review</TableHead>
+            <TableHead>{t.table.created}</TableHead>
+            <TableHead>{t.table.risk}</TableHead>
+            <TableHead>{t.table.action}</TableHead>
+            <TableHead>{t.table.status}</TableHead>
+            <TableHead>{t.table.reasons}</TableHead>
+            <TableHead className="text-right">{t.table.review}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableSkeletonRows columns={6} />
           ) : isError ? (
-            <ErrorTableRow colSpan={6} title="Error loading risk evaluations." onRetry={() => refetch()} />
+            <ErrorTableRow colSpan={6} title={t.state.riskError} onRetry={() => refetch()} />
           ) : evaluations.length === 0 ? (
             <EmptyTableRow
               colSpan={6}
-              title="No risk evaluations found."
-              description="Try a different level or action filter."
+              title={t.state.riskEmpty}
+              description={t.state.riskEmptyDescription}
             />
           ) : (
             evaluations.map((item) => {
@@ -200,22 +202,22 @@ export function RiskTable() {
                           variant="outline"
                           disabled={approveMutation.isPending || rejectMutation.isPending}
                           onClick={() => {
-                            const reason = requestReason("Approve");
+                            const reason = requestReason(t.detail.approveReasonPrompt);
                             if (reason) approveMutation.mutate({ id, reason });
                           }}
                         >
-                          Approve
+                          {t.actions.approve}
                         </Button>
                         <Button
                           size="sm"
                           variant="destructive"
                           disabled={approveMutation.isPending || rejectMutation.isPending}
                           onClick={() => {
-                            const reason = requestReason("Reject");
+                            const reason = requestReason(t.detail.rejectReasonPrompt);
                             if (reason) rejectMutation.mutate({ id, reason });
                           }}
                         >
-                          Reject
+                          {t.actions.reject}
                         </Button>
                       </div>
                     ) : (

@@ -21,8 +21,10 @@ import { PaginationControls } from "@/components/admin/pagination-controls";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Timestamp } from "@/components/admin/timestamp";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
+import { useLanguage } from "@/components/language-provider";
 
 export function AccountsTable() {
+  const { dictionary: t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -62,7 +64,7 @@ export function AccountsTable() {
     <DataTableShell
       toolbar={
         <Toolbar
-          searchPlaceholder="Search email or phone..."
+          searchPlaceholder={t.filters.searchEmailPhone}
           searchValue={q}
           onSearchChange={(value) => {
             setQ(value);
@@ -84,19 +86,19 @@ export function AccountsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Account</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Balance</TableHead>
-              <TableHead className="text-right">Created At</TableHead>
+              <TableHead>{t.table.account}</TableHead>
+              <TableHead>{t.table.status}</TableHead>
+              <TableHead className="text-right">{t.table.balance}</TableHead>
+              <TableHead className="text-right">{t.table.createdAt}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableSkeletonRows columns={4} />
             ) : isError ? (
-              <ErrorTableRow colSpan={4} title="Error loading accounts." onRetry={() => refetch()} />
+              <ErrorTableRow colSpan={4} title={t.table.accountsError} onRetry={() => refetch()} />
             ) : accounts.length === 0 ? (
-              <EmptyTableRow colSpan={4} title="No accounts found." description="Try adjusting the search term." />
+              <EmptyTableRow colSpan={4} title={t.table.accountsEmpty} description={t.table.accountsEmptyDescription} />
             ) : (
               accounts.map((account) => (
                 <TableRow key={account.id}>
