@@ -120,6 +120,46 @@ export interface ReconciliationResult {
   findings: ReconciliationFinding[];
 }
 
+export interface SupportChatMessage {
+  id: string;
+  sessionId: string;
+  senderType: "USER" | "AI" | "ADMIN" | "SYSTEM" | string;
+  message: string;
+  metadata?: Record<string, string> | null;
+  createdAt: string;
+}
+
+export interface SupportCase {
+  caseId: string;
+  sessionId: string;
+  userId: string;
+  status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED" | string;
+  topic: string;
+  relatedTransactionId?: string | null;
+  assignedAdminId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SupportTransactionSnapshot {
+  id: string;
+  status: string;
+  failureReason?: string | null;
+  compensated: boolean;
+  traceId?: string | null;
+}
+
+export interface SupportCaseDetail {
+  caseId: string;
+  sessionId: string;
+  status: string;
+  topic: string;
+  relatedTransactionId?: string | null;
+  summary: string;
+  messages: SupportChatMessage[];
+  transactionSnapshot?: SupportTransactionSnapshot | null;
+}
+
 export interface SystemMetrics {
   transferFailedTotal: number;
   transferCompensatingTotal: number;
