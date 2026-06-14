@@ -43,10 +43,12 @@ export function SupportCasesTable() {
   const initialPage = Number(searchParams.get("page") || "1");
   const initialStatus = searchParams.get("status") || "ALL";
   const initialTopic = searchParams.get("topic") || "ALL";
+  const initialQuery = searchParams.get("q") || "";
 
   const [page, setPage] = useState(initialPage);
   const [status, setStatus] = useState(initialStatus);
   const [topic, setTopic] = useState(initialTopic);
+  const [query, setQuery] = useState(initialQuery);
 
   useEffect(() => {
     const params = new URLSearchParams(currentSearch);
@@ -61,21 +63,33 @@ export function SupportCasesTable() {
     } else {
       params.set("topic", topic);
     }
+    if (query.trim()) {
+      params.set("q", query.trim());
+    } else {
+      params.delete("q");
+    }
     const nextSearch = params.toString();
     if (nextSearch !== currentSearch) {
       router.replace(`${pathname}?${nextSearch}`);
     }
-  }, [page, status, topic, pathname, router, currentSearch]);
+  }, [page, status, topic, query, pathname, router, currentSearch]);
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["support-cases", { page: page - 1, size: 10, status, topic }],
-    queryFn: () => getSupportCases(page - 1, 10, status, topic),
+    queryKey: ["support-cases", { page: page - 1, size: 10, status, topic, query }],
+    queryFn: () => getSupportCases(page - 1, 10, status, topic, query),
   });
 
   return (
     <DataTableShell
       toolbar={
-        <Toolbar searchPlaceholder={t.filters.supportSearchUnavailable}>
+        <Toolbar
+          searchValue={query}
+          searchPlaceholder={t.filters.supportSearchPlaceholder}
+          onSearchChange={(value) => {
+            setQuery(value);
+            setPage(1);
+          }}
+        >
           <select
             aria-label={t.filters.caseStatus}
             className="flex h-9 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[180px]"

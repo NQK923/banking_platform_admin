@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { AccountsTable } from "./accounts-table";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as actions from "@/actions/accounts.actions";
+import { renderWithLanguage } from "@/test/render-with-language";
 
 // Mock the server action
 vi.mock("@/actions/accounts.actions", () => ({
@@ -31,7 +32,7 @@ describe("AccountsTable", () => {
   });
 
   const renderComponent = () => {
-    return render(
+    return renderWithLanguage(
       <QueryClientProvider client={queryClient}>
         <AccountsTable />
       </QueryClientProvider>

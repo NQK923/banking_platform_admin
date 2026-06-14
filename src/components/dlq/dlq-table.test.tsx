@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { DlqTable } from "./dlq-table";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as actions from "@/actions/operations.actions";
 import { toast } from "sonner";
+import { renderWithLanguage } from "@/test/render-with-language";
 
 vi.mock("@/actions/operations.actions", () => ({
   getDlqMessages: vi.fn(),
@@ -56,7 +57,7 @@ describe("DlqTable Replay Flows", () => {
   });
 
   const renderComponent = () => {
-    return render(
+    return renderWithLanguage(
       <QueryClientProvider client={queryClient}>
         <DlqTable />
       </QueryClientProvider>

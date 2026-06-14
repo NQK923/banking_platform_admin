@@ -37,20 +37,21 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ refreshToken: session.refreshToken }),
+        body: JSON.stringify({ userId: session.userId, refreshToken: session.refreshToken }),
       });
 
       if (!refreshRes.ok) {
         throw new Error("Refresh failed");
       }
 
-      const { accessToken, refreshToken } = await refreshRes.json();
+      const { accessToken, refreshToken, userId } = await refreshRes.json();
       
       // Update session
       session = {
         ...session,
         accessToken,
         refreshToken,
+        userId: typeof userId === "string" && userId ? userId : session.userId,
       };
       await createSession(session);
 

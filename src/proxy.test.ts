@@ -36,6 +36,7 @@ describe("Middleware Role Guard", () => {
     vi.spyOn(sessionModule, "decrypt").mockResolvedValue({
       accessToken: "...",
       refreshToken: "...",
+      userId: "admin-user-id",
       roles: ["ROLE_ADMIN"],
       expiresAt: 9999999999,
     });
@@ -51,6 +52,7 @@ describe("Middleware Role Guard", () => {
     vi.spyOn(sessionModule, "decrypt").mockResolvedValue({
       accessToken: "...",
       refreshToken: "...",
+      userId: "user-id",
       roles: ["ROLE_USER"],
       expiresAt: 9999999999,
     });

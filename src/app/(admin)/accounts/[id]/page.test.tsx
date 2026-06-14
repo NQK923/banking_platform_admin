@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { screen, fireEvent, waitFor, act } from "@testing-library/react";
 import AccountDetailPage from "./page";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as actions from "@/actions/accounts.actions";
 import { toast } from "sonner";
 import { Suspense } from "react";
+import { renderWithLanguage } from "@/test/render-with-language";
 
 // Mock the server action
 vi.mock("@/actions/accounts.actions", () => ({
@@ -45,7 +46,7 @@ describe("Suspend Confirm Flow", () => {
   });
 
   const renderComponent = () => {
-    return render(
+    return renderWithLanguage(
       <QueryClientProvider client={queryClient}>
         <Suspense fallback={<div>Loading...</div>}>
           <AccountDetailPage params={Promise.resolve({ id: "acc-123" })} />

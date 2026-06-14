@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { DashboardContent } from "./dashboard-content";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as actions from "@/actions/operations.actions";
+import { renderWithLanguage } from "@/test/render-with-language";
 
 // Mock the server action
 vi.mock("@/actions/operations.actions", () => ({
@@ -20,6 +21,7 @@ describe("DashboardContent", () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
+    vi.resetAllMocks();
     queryClient = new QueryClient({
       defaultOptions: {
         queries: {
@@ -27,10 +29,18 @@ describe("DashboardContent", () => {
         },
       },
     });
+    vi.spyOn(actions, "getLiveMetrics").mockResolvedValue({
+      transferFailedTotal: 0,
+      transferCompensatingTotal: 0,
+      walletSagaLatency: 12,
+      walletConsumerLag: 0,
+      walletDlqDepth: 0,
+      reconciliationDrift: 0,
+    });
   });
 
   const renderComponent = () => {
-    return render(
+    return renderWithLanguage(
       <QueryClientProvider client={queryClient}>
         <DashboardContent />
       </QueryClientProvider>

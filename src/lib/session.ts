@@ -5,6 +5,7 @@ import "server-only";
 export type SessionPayload = {
   accessToken: string;
   refreshToken: string;
+  userId: string;
   roles: string[];
   expiresAt: number; // Token expiration timestamp in seconds
 };

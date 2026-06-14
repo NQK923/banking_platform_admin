@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SupportCaseDetail } from "./support-case-detail";
 import * as actions from "@/actions/support.actions";
+import { renderWithLanguage } from "@/test/render-with-language";
 
 vi.mock("@/actions/support.actions", () => ({
   getSupportCase: vi.fn(),
@@ -55,7 +56,7 @@ describe("SupportCaseDetail", () => {
   });
 
   it("renders case summary, transaction facts, and transcript", async () => {
-    render(
+    renderWithLanguage(
       <QueryClientProvider client={queryClient}>
         <SupportCaseDetail caseId="case-1" />
       </QueryClientProvider>

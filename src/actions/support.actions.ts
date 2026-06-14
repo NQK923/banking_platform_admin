@@ -8,13 +8,15 @@ export async function getSupportCases(
   page: number = 0,
   size: number = 10,
   status?: string,
-  topic?: string
+  topic?: string,
+  q?: string
 ): Promise<PaginatedResponse<SupportCase>> {
   const searchParams = new URLSearchParams();
   searchParams.set("page", page.toString());
   searchParams.set("size", size.toString());
   if (status && status !== "ALL") searchParams.set("status", status);
   if (topic && topic !== "ALL") searchParams.set("topic", topic);
+  if (q && q.trim()) searchParams.set("q", q.trim());
 
   const res = await apiFetch(`/api/admin/support/cases?${searchParams.toString()}`);
   if (!res.ok) {

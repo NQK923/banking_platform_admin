@@ -45,7 +45,10 @@ export async function login(prevState: { error?: string } | null, formData: Form
     }
 
     const data = await res.json();
-    const { accessToken, refreshToken, roles } = data;
+    const { accessToken, refreshToken, userId, roles } = data;
+    if (typeof userId !== "string" || !userId) {
+      return { error: "Invalid gateway response" };
+    }
 
     const tokenPayload = decodeBackendAccessToken(accessToken);
     const tokenRoles = Array.isArray(roles) ? roles : tokenPayload.roles || [];
@@ -57,6 +60,7 @@ export async function login(prevState: { error?: string } | null, formData: Form
     await createSession({
       accessToken,
       refreshToken,
+      userId,
       roles: tokenRoles,
       expiresAt: tokenPayload.exp || Math.floor(Date.now() / 1000) + 900,
     });
