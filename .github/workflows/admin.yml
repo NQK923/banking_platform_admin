@@ -13,6 +13,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SESSION_SECRET: ci-session-secret-at-least-32-characters
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
