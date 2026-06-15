@@ -88,13 +88,14 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   const normalized = status.toUpperCase();
   const Icon = icons[normalized] ?? Clock3;
   const label = dictionary.status[normalized] ?? status;
+  const isSpinning = normalized === "PROCESSING" || normalized === "COMPENSATING";
 
   return (
     <Badge
       variant="outline"
-      className={cn("h-6 rounded-md border px-2 font-medium tracking-normal", styles[normalized], className)}
+      className={cn("h-6 gap-1.5 rounded-md border px-2 font-medium tracking-normal", styles[normalized], className)}
     >
-      <Icon className="h-3 w-3" aria-hidden="true" />
+      <Icon className={cn("h-3 w-3", isSpinning && "animate-spin")} aria-hidden="true" />
       {label}
     </Badge>
   );

@@ -59,13 +59,13 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "group relative flex items-center gap-3 rounded-md px-3 py-2 transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
-                    : "text-sidebar-foreground/70"
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm border-l-2 border-primary rounded-l-none pl-[10px]"
+                    : "text-sidebar-foreground/70 hover:translate-x-0.5"
                 )}
               >
-                <Icon className="h-4 w-4" aria-hidden="true" />
+                <Icon className={cn("h-4 w-4 transition-transform duration-300 group-hover:scale-110", isActive ? "text-primary" : "text-sidebar-foreground/50 group-hover:text-sidebar-accent-foreground")} aria-hidden="true" />
                 {label}
               </Link>
             );

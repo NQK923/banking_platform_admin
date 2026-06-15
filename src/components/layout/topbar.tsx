@@ -44,11 +44,11 @@ export function Topbar() {
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <span className="sr-only">{dictionary.common.toggleTheme}</span>
           </Button>
-          <div className="hidden items-center gap-2 rounded-md border bg-card px-2 py-1 text-sm font-medium sm:flex">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary">
+          <div className="hidden items-center gap-2 rounded-lg border bg-card/60 backdrop-blur-sm px-2.5 py-1 text-sm font-medium sm:flex hover:bg-muted/40 transition-colors">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
               <User className="h-4 w-4" aria-hidden="true" />
             </div>
-            <span className="hidden md:inline-block">{dictionary.common.adminUser}</span>
+            <span className="hidden md:inline-block font-sans text-muted-foreground">{dictionary.common.adminUser}</span>
           </div>
           <form action={formAction}>
             <Button variant="outline" size="sm" type="submit" disabled={pending} aria-label={pending ? dictionary.common.loggingOut : dictionary.common.logout}>

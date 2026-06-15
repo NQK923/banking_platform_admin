@@ -37,7 +37,7 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: session.userId, refreshToken: session.refreshToken }),
+        body: JSON.stringify({ refreshToken: session.refreshToken }),
       });
 
       if (!refreshRes.ok) {

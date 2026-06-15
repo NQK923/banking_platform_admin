@@ -148,3 +148,32 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    box-shadow: 0 0 8px oklch(0.56 0.19 28 / 20%);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 16px oklch(0.56 0.19 28 / 60%), 0 0 4px oklch(0.56 0.19 28 / 30%);
+  }
+}
+
+@utility animate-float {
+  animation: float 3.5s ease-in-out infinite;
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+

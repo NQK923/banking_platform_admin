@@ -24,18 +24,21 @@ const toneClasses = {
 
 export function StatCard({ label, value, icon: Icon, tone = "neutral", delta, isLoading }: StatCardProps) {
   return (
-    <AppCard className="min-h-32">
+    <AppCard className="min-h-32 group">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-1">
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-        <span className={cn("flex h-8 w-8 items-center justify-center rounded-md", toneClasses[tone])}>
-          <Icon className="h-4 w-4" aria-hidden="true" />
+        <span className={cn(
+          "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:rotate-6 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]", 
+          toneClasses[tone]
+        )}>
+          <Icon className="h-4.5 w-4.5 transition-transform duration-300" aria-hidden="true" />
         </span>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <Skeleton className="h-8 w-20" />
         ) : (
-          <div className="numbers break-words text-2xl font-semibold tracking-tight sm:text-3xl">{value}</div>
+          <div className="numbers break-words text-2xl font-semibold tracking-tight sm:text-3xl transition-colors duration-300 group-hover:text-primary">{value}</div>
         )}
         {delta ? <p className="mt-1 text-xs text-muted-foreground">{delta}</p> : null}
       </CardContent>
