@@ -23,6 +23,7 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
 
   const config: RequestInit = {
     ...customConfig,
+    cache: "no-store",
     headers,
   };
 
@@ -34,6 +35,7 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
     try {
       const refreshRes = await fetch(`${GATEWAY_URL}/api/auth/refresh`, {
         method: "POST",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
         },
@@ -45,6 +47,10 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
       }
 
       const { accessToken, refreshToken, userId } = await refreshRes.json();
+      if (typeof accessToken !== "string" || !accessToken ||
+          typeof refreshToken !== "string" || !refreshToken) {
+        throw new Error("Invalid refresh response");
+      }
       
       // Update session
       session = {
@@ -62,6 +68,11 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
       await clearSession();
       throw new Error("unauthorized");
     }
+  }
+
+  if (response.status === 401 && requireAuth) {
+    await clearSession();
+    throw new Error("unauthorized");
   }
 
   if (response.status === 403) {

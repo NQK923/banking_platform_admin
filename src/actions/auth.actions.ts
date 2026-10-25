@@ -6,7 +6,7 @@ import { createSession, clearSession } from "@/lib/session";
 const GATEWAY_URL = process.env.GATEWAY_URL || "http://localhost:8080";
 
 function decodeBackendAccessToken(accessToken: string) {
-  const [payloadPart] = accessToken.split(".");
+  const [, payloadPart] = accessToken.split(".");
   if (!payloadPart) return {};
 
   try {
@@ -46,7 +46,9 @@ export async function login(prevState: { error?: string } | null, formData: Form
 
     const data = await res.json();
     const { accessToken, refreshToken, userId, roles } = data;
-    if (typeof userId !== "string" || !userId) {
+    if (typeof userId !== "string" || !userId ||
+        typeof accessToken !== "string" || !accessToken ||
+        typeof refreshToken !== "string" || !refreshToken) {
       return { error: "Invalid gateway response" };
     }
 
