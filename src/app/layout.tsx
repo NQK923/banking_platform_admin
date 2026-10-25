@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -21,11 +22,12 @@ export const metadata: Metadata = {
   description: "Internal Banking Platform Admin Console",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang="vi" suppressHydrationWarning>
       <body
@@ -34,6 +36,7 @@ export default function RootLayout({
         <QueryProvider>
           <LanguageProvider>
             <ThemeProvider
+              nonce={nonce}
               attribute="class"
               defaultTheme="system"
               enableSystem

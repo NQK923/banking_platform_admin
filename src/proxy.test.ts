@@ -22,6 +22,20 @@ describe("Middleware Role Guard", () => {
     } as unknown as NextRequest;
   };
 
+  it("uses a different CSP nonce per page and forwards it for dynamic scripts", async () => {
+    vi.spyOn(sessionModule, "decrypt").mockResolvedValue(null);
+    const first = await proxy(createRequest("/login", false));
+    const second = await proxy(createRequest("/login", false));
+    const policy = first.headers.get("Content-Security-Policy")!;
+    expect(policy).toContain("'strict-dynamic'");
+    expect(policy).toContain("frame-ancestors 'none'");
+    expect(policy).toContain("object-src 'none'");
+    expect(policy.split(";").find((part) => part.includes("script-src"))).not.toContain("'unsafe-inline'");
+    expect(second.headers.get("Content-Security-Policy")).not.toBe(policy);
+    expect(first.headers.get("x-middleware-request-x-nonce")).toBeTruthy();
+    expect(first.headers.get("X-Content-Type-Options")).toBe("nosniff");
+  });
+
   it("redirects to /login if no session on protected route", async () => {
     const req = createRequest("/dashboard", false);
     vi.spyOn(sessionModule, "decrypt").mockResolvedValue(null);
