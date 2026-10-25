@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDlqMessages, replayDlqMessage } from "@/actions/operations.actions";
+import { parsePageParam } from "@/lib/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -41,8 +42,9 @@ export function DlqTable() {
   const currentSearch = searchParams.toString();
   const queryClient = useQueryClient();
 
-  const initialPage = Number(searchParams.get("page") || "1");
+  const initialPage = parsePageParam(searchParams.get("page"));
   const [page, setPage] = useState(initialPage);
+
 
   useEffect(() => {
     const params = new URLSearchParams(currentSearch);

@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAccounts } from "@/actions/accounts.actions";
 import { formatMoney } from "@/lib/formatters";
+import { parsePageParam } from "@/lib/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -30,10 +31,11 @@ export function AccountsTable() {
   const searchParams = useSearchParams();
   const currentSearch = searchParams.toString();
 
-  const initialPage = Number(searchParams.get("page") || "1");
+  const initialPage = parsePageParam(searchParams.get("page"));
   const initialQ = searchParams.get("q") || "";
 
   const [page, setPage] = useState(initialPage);
+
   const [q, setQ] = useState(initialQ);
   const debouncedQ = useDebounce(q, 500);
 

@@ -55,3 +55,17 @@ export function normalizePaginatedResponse<T>(
           : 0,
   };
 }
+
+export function parsePageParam(value: string | null | undefined): number {
+  if (value === null || value === undefined || value.trim() === "") {
+    return 1;
+  }
+  if (!/^[1-9]\d*$/.test(value)) {
+    return 1;
+  }
+  const num = Number(value);
+  if (!Number.isInteger(num)) {
+    return 1;
+  }
+  return num;
+}

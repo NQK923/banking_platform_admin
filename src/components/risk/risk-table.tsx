@@ -10,6 +10,7 @@ import {
   getRiskEvaluations,
   rejectRiskEvaluation,
 } from "@/actions/risk.actions";
+import { parsePageParam } from "@/lib/pagination";
 import { DataTableShell } from "@/components/admin/data-table";
 import { PaginationControls } from "@/components/admin/pagination-controls";
 import { EmptyTableRow, ErrorTableRow, TableSkeletonRows } from "@/components/admin/state-views";
@@ -39,7 +40,8 @@ export function RiskTable() {
   const currentSearch = searchParams.toString();
   const queryClient = useQueryClient();
 
-  const [page, setPage] = useState(Number(searchParams.get("page") || "1"));
+  const [page, setPage] = useState(parsePageParam(searchParams.get("page")));
+
   const [level, setLevel] = useState(searchParams.get("level") || "ALL");
   const [action, setAction] = useState(searchParams.get("action") || "ALL");
 

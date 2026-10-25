@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTransactions } from "@/actions/transactions.actions";
 import { formatMoney } from "@/lib/formatters";
+import { parsePageParam } from "@/lib/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import {
@@ -32,7 +33,8 @@ export function TransactionsTable() {
   const searchParams = useSearchParams();
   const currentSearch = searchParams.toString();
 
-  const initialPage = Number(searchParams.get("page") || "1");
+  const initialPage = parsePageParam(searchParams.get("page"));
+
   const initialStatus = searchParams.get("status") || "ALL";
   const initialAccountId = searchParams.get("accountId") || "";
 

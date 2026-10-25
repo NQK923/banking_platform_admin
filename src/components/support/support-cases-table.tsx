@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getSupportCases } from "@/actions/support.actions";
+import { parsePageParam } from "@/lib/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -40,7 +41,8 @@ export function SupportCasesTable() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentSearch = searchParams.toString();
-  const initialPage = Number(searchParams.get("page") || "1");
+  const initialPage = parsePageParam(searchParams.get("page"));
+
   const initialStatus = searchParams.get("status") || "ALL";
   const initialTopic = searchParams.get("topic") || "ALL";
   const initialQuery = searchParams.get("q") || "";
