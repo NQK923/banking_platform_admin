@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getLiveMetrics } from "@/actions/operations.actions";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 import { format } from "date-fns";
 import { PageHeader } from "@/components/admin/page-header";
@@ -117,19 +116,19 @@ export function DashboardContent() {
         />
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <AppCard>
+      <div className="grid min-w-0 gap-4 xl:grid-cols-2">
+        <AppCard className="min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
               {dictionary.dashboard.sagaLatency}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pl-2">
+          <CardContent className="min-w-0 pl-2">
             {chartData.length > 0 ? (
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
+              <ChartFrame testId="saga-latency-chart">
+                {(width) => (
+                  <LineChart data={chartData} width={width} height={300}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                     <XAxis 
                       dataKey="time" 
@@ -162,8 +161,8 @@ export function DashboardContent() {
                       activeDot={{ r: 4, fill: "var(--primary)" }}
                     />
                   </LineChart>
-                </ResponsiveContainer>
-              </div>
+                )}
+              </ChartFrame>
             ) : (
               <div className="flex h-[300px] items-center justify-center rounded-md border bg-muted/20 text-muted-foreground">
                 {telemetryUnavailable ? (
@@ -187,18 +186,18 @@ export function DashboardContent() {
           </CardContent>
         </AppCard>
 
-        <AppCard>
+        <AppCard className="min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-destructive" />
               {dictionary.dashboard.failureSignals}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pl-2">
+          <CardContent className="min-w-0 pl-2">
             {chartData.length > 0 ? (
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
+              <ChartFrame testId="failure-signals-chart">
+                {(width) => (
+                  <LineChart data={chartData} width={width} height={300}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                     <XAxis
                       dataKey="time"
@@ -224,8 +223,8 @@ export function DashboardContent() {
                     <Line type="monotone" dataKey="failed" stroke="var(--destructive)" strokeWidth={2} dot={false} />
                     <Line type="monotone" dataKey="compensating" stroke="var(--chart-3)" strokeWidth={2} dot={false} />
                   </LineChart>
-                </ResponsiveContainer>
-              </div>
+                )}
+              </ChartFrame>
             ) : (
               <div className="flex h-[300px] items-center justify-center rounded-md border bg-muted/20 text-muted-foreground">
                 {telemetryUnavailable ? (
@@ -262,6 +261,40 @@ export function DashboardContent() {
           </Badge>
         </CardContent>
       </AppCard>
+    </div>
+  );
+}
+
+function ChartFrame({
+  testId,
+  children,
+}: {
+  testId: string;
+  children: (width: number) => ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(640);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const updateWidth = () => {
+      const nextWidth = Math.floor(element.getBoundingClientRect().width);
+      if (nextWidth > 0) {
+        setWidth(Math.max(320, nextWidth));
+      }
+    };
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="h-[300px] min-w-0 w-full overflow-hidden" data-testid={testId}>
+      {children(width)}
     </div>
   );
 }

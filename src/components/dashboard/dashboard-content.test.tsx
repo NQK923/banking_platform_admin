@@ -52,14 +52,18 @@ describe("DashboardContent", () => {
     expect(screen.getByText("Polling (5s)")).toBeDefined();
   });
 
-  it("renders telemetry pending state gracefully when query fails", async () => {
+  it("renders telemetry unavailable state without incomplete release copy when query fails", async () => {
     vi.spyOn(actions, "getLiveMetrics").mockRejectedValue(new Error("Metrics endpoint unavailable"));
 
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Telemetry pending")).toBeDefined();
-      expect(screen.getAllByText("Metrics not configured").length).toBeGreaterThan(0);
+      expect(screen.getByText("Live telemetry unavailable")).toBeDefined();
+      expect(screen.getAllByText("Telemetry unavailable").length).toBeGreaterThan(0);
     });
+    expect(screen.queryByText(["Telemetry", "pending"].join(" "))).toBeNull();
+    expect(
+      screen.queryByText(["Failure trend charts", "will appear", "when the", "metrics", "API", "is wired."].join(" "))
+    ).toBeNull();
   });
 });
