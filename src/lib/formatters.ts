@@ -1,13 +1,11 @@
 /**
  * Safely formats a decimal value for display without doing floating-point
- * arithmetic. The backend contract is decimal-as-string, but some local JSON
- * responses may still arrive as numbers; those are stringified for display only.
+ * arithmetic. Missing or invalid values are unavailable, never an implied zero.
  */
-export function formatMoney(amount: string | number | null | undefined, currency: string = "VND"): string {
-  if (amount === null || amount === undefined || amount === "") return "0";
-  if (typeof amount !== "string" && typeof amount !== "number") return "0";
+export function formatMoney(amount: string | null | undefined, currency: string = "VND"): string {
+  if (typeof amount !== "string" || !/^-?\d+(\.\d+)?$/.test(amount)) return "—";
 
-  const amountStr = String(amount);
+  const amountStr = amount;
   
   const isNegative = amountStr.startsWith("-");
   const cleanStr = amountStr.replace(/^-/, "");

@@ -16,13 +16,14 @@ describe("formatMoney", () => {
   it("handles zero and empty values", () => {
     expect(formatMoney("0", "VND")).toBe("0 VND");
     expect(formatMoney("0.0000", "VND")).toBe("0 VND");
-    expect(formatMoney(null, "VND")).toBe("0");
-    expect(formatMoney(undefined, "VND")).toBe("0");
+    expect(formatMoney(null, "VND")).toBe("—");
+    expect(formatMoney(undefined, "VND")).toBe("—");
   });
 
-  it("tolerates numeric JSON values for display only", () => {
-    expect(formatMoney(250, "VND")).toBe("250 VND");
-    expect(formatMoney(-1234.5, "USD")).toBe("-1,234.5 USD");
+  it("does not display numeric or malformed JSON as trustworthy money", () => {
+    for (const invalid of [250, -1234.5, NaN, true, "", "1e3", "1,000", "NaN", " 100 "]) {
+      expect(formatMoney(invalid as unknown as string, "VND")).toBe("—");
+    }
   });
 
   it("handles very large strings without losing precision", () => {
